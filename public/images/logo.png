@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" role="img" aria-label="Go Cozy Caravan">
+  <rect width="320" height="100" fill="#1a1a1a"/>
+  <text x="160" y="42" text-anchor="middle" fill="#e8b923" font-family="Arial,sans-serif" font-size="28" font-weight="bold">GO COZY</text>
+  <text x="160" y="72" text-anchor="middle" fill="#e8b923" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">CARAVAN</text>
+  <circle cx="95" cy="38" r="6" fill="#e53935"/>
+  <circle cx="225" cy="38" r="6" fill="#e53935"/>
+</svg>
