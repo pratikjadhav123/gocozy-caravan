@@ -37,7 +37,7 @@ export const VEHICLES = [
     seats: "8–12",
     beds: "4–6",
     highlight: "LED lounge, smart TV, AC, premium leather seating",
-    image: "/images/gallery/interior-lounge-1.svg",
+    image: "/images/gallery/exterior-side-trees.png",
   },
   {
     id: "cozy-family",
@@ -45,7 +45,7 @@ export const VEHICLES = [
     seats: "10–14",
     beds: "6–8",
     highlight: "Spacious layout, kitchenette, bathroom with shower",
-    image: "/images/gallery/interior-seating.svg",
+    image: "/images/gallery/family-lounge.png",
   },
   {
     id: "cozy-elite",
@@ -53,7 +53,7 @@ export const VEHICLES = [
     seats: "6–8",
     beds: "4",
     highlight: "Executive cabin, mood lighting, entertainment suite",
-    image: "/images/gallery/interior-tv.svg",
+    image: "/images/gallery/interior-lounge-1.png",
   },
 ] as const;
 

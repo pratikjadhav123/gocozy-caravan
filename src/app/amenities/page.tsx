@@ -8,10 +8,12 @@ export const metadata: Metadata = {
 };
 
 const gallery = [
-  { src: "/images/gallery/interior-lounge-1.svg", alt: "Lounge seating with LED ceiling" },
-  { src: "/images/gallery/interior-bathroom.svg", alt: "Onboard bathroom with shower" },
-  { src: "/images/gallery/interior-kitchen.svg", alt: "Kitchenette and storage" },
-  { src: "/images/gallery/interior-bed.svg", alt: "Convertible sleeping area" },
+  { src: "/images/gallery/interior-lounge-1.png", alt: "Lounge seating with LED ceiling" },
+  { src: "/images/gallery/interior-bathroom.png", alt: "Onboard bathroom with shower" },
+  { src: "/images/gallery/interior-sofa.png", alt: "Quilted leather sofa and storage" },
+  { src: "/images/gallery/interior-bed.png", alt: "Convertible sleeping area" },
+  { src: "/images/gallery/interior-tv.png", alt: "Entertainment suite with smart TV" },
+  { src: "/images/gallery/interior-kitchen.png", alt: "Bathroom washbasin and fittings" },
 ];
 
 export default function AmenitiesPage() {
@@ -36,13 +38,19 @@ export default function AmenitiesPage() {
           </div>
 
           <h2 className="mt-16 font-display text-2xl font-bold text-white">Inside the caravan</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {gallery.map((img) => (
               <div
                 key={img.src}
                 className="relative aspect-[4/3] overflow-hidden rounded-xl border border-white/10"
               >
-                <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="50vw" />
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width:1024px) 50vw, 33vw"
+                />
               </div>
             ))}
           </div>

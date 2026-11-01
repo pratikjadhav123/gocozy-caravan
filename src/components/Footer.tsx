@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { NAV_LINKS, SITE, whatsappUrl } from "@/lib/constants";
 
@@ -8,8 +9,14 @@ export function Footer() {
     <footer className="border-t border-white/10 bg-charcoal text-zinc-400">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
-          <p className="font-display text-lg font-bold text-gold">{SITE.name}</p>
-          <p className="mt-2 text-sm leading-relaxed">{SITE.description}</p>
+          <Image
+            src="/images/logo.png"
+            alt={`${SITE.name} logo`}
+            width={160}
+            height={64}
+            className="h-12 w-auto"
+          />
+          <p className="mt-3 text-sm leading-relaxed">{SITE.description}</p>
         </div>
 
         <div>

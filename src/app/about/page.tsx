@@ -18,8 +18,8 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10">
             <Image
-              src="/images/gallery/team-van.jpg"
-              alt="Go Cozy Caravan team with luxury van"
+              src="/images/gallery/team-van.png"
+              alt="Go Cozy Caravan hosts with the branded luxury van"
               fill
               className="object-cover"
               sizes="(max-width:1024px) 100vw, 50vw"
@@ -41,6 +41,27 @@ export default function AboutPage() {
               availability via WhatsApp at <strong className="text-gold">{SITE.phoneDisplay}</strong>{" "}
               or email at <strong className="text-gold">{SITE.email}</strong>.
             </p>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-6">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+            <Image
+              src="/images/gallery/family-lounge.png"
+              alt="Family relaxing inside Go Cozy Caravan lounge"
+              fill
+              className="object-cover"
+              sizes="(max-width:640px) 100vw, 50vw"
+            />
+          </div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+            <Image
+              src="/images/gallery/exterior-side-road.png"
+              alt="Go Cozy Caravan parked roadside with destination map wrap"
+              fill
+              className="object-cover"
+              sizes="(max-width:640px) 100vw, 50vw"
+            />
           </div>
         </div>
       </section>

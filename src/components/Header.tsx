@@ -19,11 +19,11 @@ export function Header() {
           onClick={() => setOpen(false)}
         >
           <Image
-            src="/images/logo.svg"
+            src="/images/logo.png"
             alt={`${SITE.name} logo`}
-            width={140}
-            height={48}
-            className="h-10 w-auto sm:h-11"
+            width={180}
+            height={72}
+            className="h-11 w-auto sm:h-12"
             priority
           />
         </Link>

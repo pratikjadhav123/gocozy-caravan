@@ -56,7 +56,7 @@ export default function VehiclesPage() {
 
           <div className="relative aspect-[21/9] overflow-hidden rounded-2xl border border-white/10">
             <Image
-              src="/images/hero-van-side.svg"
+              src="/images/hero-van-side.png"
               alt="Go Cozy Caravan exterior with destination map wrap"
               fill
               className="object-cover"
