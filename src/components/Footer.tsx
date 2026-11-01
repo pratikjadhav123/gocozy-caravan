@@ -12,11 +12,11 @@ export function Footer() {
           <Image
             src="/images/logo.png"
             alt={`${SITE.name} logo`}
-            width={160}
-            height={64}
-            className="h-12 w-auto"
+            width={220}
+            height={88}
+            className="h-16 w-auto sm:h-[4.5rem]"
           />
-          <p className="mt-3 text-sm leading-relaxed">{SITE.description}</p>
+          <p className="mt-4 text-sm leading-relaxed">{SITE.description}</p>
         </div>
 
         <div>
@@ -26,7 +26,7 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm">
             {NAV_LINKS.map(({ href, label }) => (
               <li key={href}>
-                <Link href={href} className="hover:text-gold">
+                <Link href={href} className="transition hover:text-gold">
                   {label}
                 </Link>
               </li>
@@ -40,13 +40,23 @@ export function Footer() {
           </p>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <a href={`mailto:${SITE.email}`} className="hover:text-gold">
+              <a href={`mailto:${SITE.email}`} className="transition hover:text-gold">
                 {SITE.email}
               </a>
             </li>
             <li>
-              <a href={wa} target="_blank" rel="noopener noreferrer" className="hover:text-gold">
+              <a href={wa} target="_blank" rel="noopener noreferrer" className="transition hover:text-gold">
                 WhatsApp {SITE.phoneDisplay}
+              </a>
+            </li>
+            <li>
+              <a
+                href={SITE.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-gold"
+              >
+                Instagram @gocozycaravan
               </a>
             </li>
             <li>{SITE.address}</li>

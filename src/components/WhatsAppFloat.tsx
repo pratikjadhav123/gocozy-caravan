@@ -10,7 +10,7 @@ export function WhatsAppFloat() {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-105 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:right-5 bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"
+      className="animate-soft-pulse fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:right-5 bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"
       aria-label={`Chat on WhatsApp ${SITE.phoneDisplay}`}
     >
       <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden>

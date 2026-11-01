@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
-import { VEHICLES } from "@/lib/constants";
+import { VEHICLES, vehicleCapacityLabel } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Vehicles",
@@ -13,7 +13,7 @@ export default function VehiclesPage() {
     <>
       <PageHero
         title="Our vehicles"
-        subtitle="Silver Force Traveller caravans with custom interiors, map-inspired branding, and full travel amenities."
+        subtitle="Go Cozy Caravan lounge units and Urbaniya for larger groups — ready for trips across India."
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">
@@ -29,24 +29,22 @@ export default function VehiclesPage() {
                   src={vehicle.image}
                   alt={vehicle.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition duration-700 hover:scale-105"
                   sizes="(max-width:1024px) 100vw, 50vw"
                 />
               </div>
-              <div>
+              <div className="animate-fade-up">
                 <h2 className="font-display text-2xl font-bold text-white">{vehicle.name}</h2>
-                <p className="mt-2 text-gold">
-                  {vehicle.seats} passengers · {vehicle.beds} sleeping spaces
-                </p>
+                <p className="mt-2 text-gold">{vehicleCapacityLabel(vehicle)}</p>
                 <p className="mt-4 text-zinc-400">{vehicle.highlight}</p>
                 <ul className="mt-4 list-inside list-disc text-sm text-zinc-400">
                   <li>Professional chauffeur available</li>
-                  <li>Flexible pick-up in Pune & nearby cities</li>
+                  <li>Flexible pick-up across India</li>
                   <li>Insurance & roadside assistance on trips</li>
                 </ul>
                 <Link
                   href="/book"
-                  className="mt-6 inline-flex rounded-full bg-gold px-6 py-3 text-sm font-bold text-charcoal"
+                  className="mt-6 inline-flex rounded-full bg-gold px-6 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-105"
                 >
                   Book this caravan
                 </Link>

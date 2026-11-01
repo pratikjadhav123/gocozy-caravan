@@ -1,40 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AMENITIES, DESTINATIONS, SITE, VEHICLES, whatsappUrl } from "@/lib/constants";
+import {
+  AMENITIES,
+  DESTINATIONS,
+  SITE,
+  VEHICLES,
+  vehicleCapacityLabel,
+  whatsappUrl,
+} from "@/lib/constants";
 
 export default function HomePage() {
   const wa = whatsappUrl("Hi GoCozyCaravan, I want to check availability for a trip.");
 
   return (
     <>
-      <section className="relative flex min-h-[calc(100dvh-4rem)] items-center overflow-hidden">
+      <section className="relative flex min-h-[calc(100dvh-5rem)] items-center overflow-hidden sm:min-h-[calc(100dvh-5.5rem)]">
         <div className="absolute inset-0">
           <Image
             src="/images/hero-van.png"
             alt="Go Cozy Caravan luxury vehicle on the road"
             fill
-            className="object-cover object-[center_40%]"
+            className="object-cover object-[center_40%] scale-105 animate-[fade-up_1.1s_ease-out]"
             priority
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/85 to-charcoal/40" />
         </div>
         <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-4 py-20 sm:px-6 sm:py-28 lg:py-32">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+          <p className="animate-fade-up text-sm font-semibold uppercase tracking-[0.2em] text-gold">
             {SITE.tagline}
           </p>
-          <h1 className="max-w-2xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-            Travel in comfort.
-            <span className="block text-gold">Sleep under the stars.</span>
+          <h1 className="animate-fade-up-delay max-w-2xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+            Your Journey,
+            <span className="block text-gold">Your Home On Wheels.</span>
           </h1>
-          <p className="max-w-xl text-lg text-zinc-300">
-            Fully equipped luxury caravans with lounge seating, AC, entertainment, and onboard
-            bathroom — perfect for family holidays and weekend escapes from Pune.
+          <p className="animate-fade-up-delay-2 max-w-xl text-lg text-zinc-300">
+            Discover India like never before with Go Cozy Caravan. Fully equipped luxury caravans
+            with premium lounge seating, AC, entertainment, and onboard bathroom — from mountains
+            to coast, travel across all India.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="animate-fade-up-delay-2 flex flex-wrap gap-4">
             <Link
               href="/book"
-              className="rounded-full bg-gold px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light"
+              className="rounded-full bg-gold px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light hover:scale-105"
             >
               Book Now
             </Link>
@@ -42,9 +50,17 @@ export default function HomePage() {
               href={wa}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
+              className="rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-gold hover:text-gold hover:scale-105"
             >
               WhatsApp us
+            </a>
+            <a
+              href={SITE.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold text-zinc-200 transition hover:border-gold hover:text-gold"
+            >
+              Instagram
             </a>
           </div>
         </div>
@@ -53,9 +69,12 @@ export default function HomePage() {
       <section className="border-y border-white/10 bg-charcoal-light py-14">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-3 sm:px-6">
           {[
-            { label: "Premium interiors", value: "Leather lounge & LED lighting" },
-            { label: "Destinations", value: DESTINATIONS.slice(0, 4).join(" · ") + " …" },
-            { label: "Support", value: "WhatsApp & email booking assistance" },
+            { label: "Premium interiors", value: "Leather lounge, LED lighting & fridge" },
+            {
+              label: "Destinations",
+              value: DESTINATIONS.slice(0, 5).join(" · ") + " · all India …",
+            },
+            { label: "Support", value: "WhatsApp booking · Instagram updates" },
           ].map((item) => (
             <div key={item.label} className="text-center sm:text-left">
               <p className="text-xs font-semibold uppercase tracking-wider text-gold">
@@ -73,7 +92,7 @@ export default function HomePage() {
             <div>
               <h2 className="font-display text-3xl font-bold text-white">Our fleet</h2>
               <p className="mt-2 max-w-lg text-zinc-400">
-                Choose a caravan sized for your group. All vehicles include driver options on
+                Two cozy caravans for families and Urbaniya for larger groups — chauffeur on
                 request.
               </p>
             </div>
@@ -85,26 +104,24 @@ export default function HomePage() {
             {VEHICLES.map((vehicle) => (
               <article
                 key={vehicle.id}
-                className="overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
+                className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
               >
                 <div className="relative aspect-[4/3] bg-zinc-800">
                   <Image
                     src={vehicle.image}
                     alt={vehicle.name}
                     fill
-                    className="object-cover"
+                    className="object-cover transition duration-500 hover:scale-105"
                     sizes="(max-width:768px) 100vw, 33vw"
                   />
                 </div>
                 <div className="p-5">
                   <h3 className="font-display text-lg font-semibold text-white">{vehicle.name}</h3>
-                  <p className="mt-1 text-sm text-zinc-400">
-                    {vehicle.seats} seats · {vehicle.beds} beds
-                  </p>
+                  <p className="mt-1 text-sm text-zinc-400">{vehicleCapacityLabel(vehicle)}</p>
                   <p className="mt-3 text-sm text-zinc-300">{vehicle.highlight}</p>
                   <Link
                     href="/book"
-                    className="mt-4 inline-block text-sm font-semibold text-gold"
+                    className="mt-4 inline-block text-sm font-semibold text-gold transition hover:underline"
                   >
                     Check availability
                   </Link>
@@ -118,12 +135,12 @@ export default function HomePage() {
       <section className="border-t border-white/10 bg-charcoal-light py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="font-display text-3xl font-bold text-white">Onboard amenities</h2>
-          <p className="mt-2 text-zinc-400">Everything you need for a cozy journey.</p>
+          <p className="mt-2 text-zinc-400">Everything you need for a cozy journey across India.</p>
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {AMENITIES.map((a) => (
               <li
                 key={a.title}
-                className="rounded-xl border border-white/10 bg-charcoal/60 p-5"
+                className="card-hover rounded-xl border border-white/10 bg-charcoal/60 p-5"
               >
                 <h3 className="font-semibold text-gold">{a.title}</h3>
                 <p className="mt-2 text-sm text-zinc-400">{a.description}</p>
@@ -146,23 +163,33 @@ export default function HomePage() {
               src="/images/gallery/interior-lounge-2.png"
               alt="Luxury caravan interior with seating and lighting"
               fill
-              className="object-cover"
+              className="object-cover transition duration-700 hover:scale-105"
               sizes="(max-width:1024px) 100vw, 50vw"
             />
           </div>
           <div>
             <h2 className="font-display text-3xl font-bold text-white">Ready to plan your trip?</h2>
             <p className="mt-4 text-zinc-400">
-              Send your dates and group size — we will hold a slot and confirm pricing over
-              WhatsApp or email.
+              Share your dates and group size — we confirm pricing over WhatsApp. Follow our
+              journeys on Instagram too.
             </p>
             <ul className="mt-6 space-y-2 text-sm text-zinc-300">
               <li>Phone: {SITE.phoneDisplay}</li>
               <li>Email: {SITE.email}</li>
+              <li>
+                <a
+                  href={SITE.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold hover:underline"
+                >
+                  Instagram @gocozycaravan
+                </a>
+              </li>
             </ul>
             <Link
               href="/book"
-              className="mt-8 inline-flex rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-charcoal"
+              className="mt-8 inline-flex rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-105"
             >
               Book a slot
             </Link>

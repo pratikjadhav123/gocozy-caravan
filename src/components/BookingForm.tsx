@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { DESTINATIONS, SITE, VEHICLES, whatsappUrl } from "@/lib/constants";
+import {
+  DESTINATIONS,
+  SITE,
+  VEHICLES,
+  vehicleCapacityLabel,
+  whatsappUrl,
+} from "@/lib/constants";
 
 type FormState = {
   name: string;
@@ -28,8 +34,8 @@ const initial: FormState = {
 export function BookingForm() {
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [reference, setReference] = useState("");
+  const [status, setStatus] = useState<"idle" | "success">("idle");
+  const [waHref, setWaHref] = useState("");
 
   function validate(): boolean {
     const next: Partial<Record<keyof FormState, string>> = {};
@@ -50,26 +56,30 @@ export function BookingForm() {
     return Object.keys(next).length === 0;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
 
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = (await res.json()) as { ok: boolean; reference?: string; error?: string };
-      if (!res.ok || !data.ok) throw new Error(data.error ?? "Booking failed");
+    const vehicle = VEHICLES.find((v) => v.id === form.vehicleId) ?? VEHICLES[0];
+    const text = [
+      `Hi ${SITE.name}, I want to book a caravan.`,
+      `Name: ${form.name.trim()}`,
+      `Phone: ${form.phone.trim()}`,
+      form.email.trim() ? `Email: ${form.email.trim()}` : null,
+      `Vehicle: ${vehicle.name} (${vehicleCapacityLabel(vehicle)})`,
+      `Pick-up: ${form.pickupDate}`,
+      `Return: ${form.returnDate}`,
+      `Destination: ${form.destination}`,
+      form.message.trim() ? `Notes: ${form.message.trim()}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-      setReference(data.reference ?? "");
-      setStatus("success");
-      setForm(initial);
-    } catch {
-      setStatus("error");
-    }
+    const href = whatsappUrl(text);
+    setWaHref(href);
+    setStatus("success");
+    window.open(href, "_blank", "noopener,noreferrer");
+    setForm(initial);
   }
 
   function field(id: keyof FormState, label: string, node: React.ReactNode) {
@@ -88,32 +98,21 @@ export function BookingForm() {
     );
   }
 
-  const waMessage = reference
-    ? whatsappUrl(
-        `Hi ${SITE.name}, my booking reference is ${reference}. Please confirm my slot.`
-      )
-    : whatsappUrl(
-        `Hi ${SITE.name}, I want to book a caravan.\nName: ${form.name}\nPhone: ${form.phone}`
-      );
-
   return (
-    <div className="rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 shadow-xl sm:p-8">
+    <div className="animate-fade-up rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 shadow-xl sm:p-8">
       {status === "success" ? (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gold">Booking request received</p>
+          <p className="text-lg font-semibold text-gold">Opening WhatsApp…</p>
           <p className="mt-2 text-sm text-zinc-400">
-            Reference: <span className="font-mono text-white">{reference}</span>
-          </p>
-          <p className="mt-4 text-sm text-zinc-400">
-            We will contact you shortly. For faster confirmation, message us on WhatsApp.
+            Your booking details are ready. Send the message to confirm your slot with us.
           </p>
           <a
-            href={waMessage}
+            href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white"
+            className="mt-6 inline-flex rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition hover:scale-105"
           >
-            Confirm on WhatsApp
+            Continue on WhatsApp
           </a>
           <button
             type="button"
@@ -176,7 +175,7 @@ export function BookingForm() {
             >
               {VEHICLES.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.name}
+                  {v.name} — {vehicleCapacityLabel(v)}
                 </option>
               ))}
             </select>
@@ -211,7 +210,7 @@ export function BookingForm() {
 
           {field(
             "destination",
-            "Preferred destination",
+            "Preferred destination (all India)",
             <select
               id="destination"
               className="input-field"
@@ -233,28 +232,22 @@ export function BookingForm() {
               id="message"
               rows={4}
               className="input-field resize-y"
-              placeholder="Group size, special requests, pick-up location..."
+              placeholder="Group size, special requests, pick-up city..."
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
             />
           )}
 
-          {status === "error" ? (
-            <p className="text-sm text-red-400" role="alert">
-              Something went wrong. Please try again or WhatsApp us directly.
-            </p>
-          ) : null}
-
           <button
             type="submit"
-            disabled={status === "loading"}
-            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light disabled:opacity-60"
+            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99]"
           >
-            {status === "loading" ? "Sending…" : "Request booking slot"}
+            Request booking on WhatsApp
           </button>
 
           <p className="text-center text-xs text-zinc-500">
-            By submitting, you agree to be contacted at {SITE.phoneDisplay} or {SITE.email}.
+            Submitting opens WhatsApp with your details — no server required. We reply at{" "}
+            {SITE.phoneDisplay}.
           </p>
         </form>
       )}

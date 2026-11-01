@@ -10,7 +10,8 @@ export function ContactForm() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "success">("idle");
+  const [waHref, setWaHref] = useState("");
 
   function validate() {
     const e: Record<string, string> = {};
@@ -24,46 +25,47 @@ export function ContactForm() {
     return Object.keys(e).length === 0;
   }
 
-  async function handleSubmit(ev: React.FormEvent) {
+  function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, email, subject, message }),
-      });
-      const data = (await res.json()) as { ok: boolean };
-      if (!res.ok || !data.ok) throw new Error("Failed");
-      setStatus("success");
-      setName("");
-      setPhone("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
-    } catch {
-      setStatus("error");
-    }
+
+    const text = [
+      `Hi ${SITE.name}, new enquiry from the website.`,
+      `Name: ${name.trim()}`,
+      `Phone: ${phone.trim()}`,
+      email.trim() ? `Email: ${email.trim()}` : null,
+      subject.trim() ? `Subject: ${subject.trim()}` : null,
+      `Message: ${message.trim()}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const href = whatsappUrl(text);
+    setWaHref(href);
+    setStatus("success");
+    window.open(href, "_blank", "noopener,noreferrer");
+    setName("");
+    setPhone("");
+    setEmail("");
+    setSubject("");
+    setMessage("");
   }
 
-  const wa = whatsappUrl(
-    `Hi ${SITE.name}, ${name || "I"} wrote: ${message || subject || "Please call me back."}`
-  );
-
   return (
-    <div className="rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 sm:p-8">
+    <div className="animate-fade-up rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 sm:p-8">
       {status === "success" ? (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gold">Message sent</p>
-          <p className="mt-2 text-sm text-zinc-400">We will reply within 24 hours.</p>
+          <p className="text-lg font-semibold text-gold">Opening WhatsApp…</p>
+          <p className="mt-2 text-sm text-zinc-400">
+            Your message is ready — send it on WhatsApp and we will reply soon.
+          </p>
           <a
-            href={wa}
+            href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white"
+            className="mt-6 inline-flex rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition hover:scale-105"
           >
-            Chat on WhatsApp
+            Continue on WhatsApp
           </a>
           <button
             type="button"
@@ -138,16 +140,15 @@ export function ContactForm() {
             />
             {errors.message ? <p className="mt-1 text-sm text-red-400">{errors.message}</p> : null}
           </div>
-          {status === "error" ? (
-            <p className="text-sm text-red-400">Could not send. Try WhatsApp or email us.</p>
-          ) : null}
           <button
             type="submit"
-            disabled={status === "loading"}
-            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold text-charcoal disabled:opacity-60"
+            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99]"
           >
-            {status === "loading" ? "Sending…" : "Send message"}
+            Send on WhatsApp
           </button>
+          <p className="text-center text-xs text-zinc-500">
+            Opens WhatsApp with your message — no backend required.
+          </p>
         </form>
       )}
     </div>

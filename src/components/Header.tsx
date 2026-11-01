@@ -12,18 +12,18 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-charcoal/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:h-[5.5rem] sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+          className="flex items-center gap-2 rounded-md transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
           onClick={() => setOpen(false)}
         >
           <Image
             src="/images/logo.png"
             alt={`${SITE.name} logo`}
-            width={180}
-            height={72}
-            className="h-11 w-auto sm:h-12"
+            width={240}
+            height={96}
+            className="h-14 w-auto sm:h-16"
             priority
           />
         </Link>
@@ -50,10 +50,19 @@ export function Header() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <a
+            href={SITE.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-white/20 px-3 py-2 text-sm text-zinc-300 transition hover:border-gold hover:text-gold"
+            aria-label="Instagram"
+          >
+            Instagram
+          </a>
           <Link
             href="/book"
-            className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-charcoal transition hover:bg-gold-light"
+            className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-charcoal transition hover:bg-gold-light hover:scale-105"
           >
             Book Now
           </Link>
@@ -61,7 +70,7 @@ export function Header() {
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 text-white lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/15 text-white lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
@@ -96,6 +105,15 @@ export function Header() {
               {label}
             </Link>
           ))}
+          <a
+            href={SITE.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+            className="rounded-lg px-3 py-3 text-base font-medium text-zinc-200 hover:bg-white/5"
+          >
+            Instagram
+          </a>
           <Link
             href="/book"
             onClick={() => setOpen(false)}

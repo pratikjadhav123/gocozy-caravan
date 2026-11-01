@@ -35,13 +35,24 @@ export default function ContactPage() {
                   </a>
                 </li>
                 <li>
+                  <span className="block text-xs uppercase text-zinc-500">Instagram</span>
+                  <a
+                    href={SITE.instagram}
+                    className="font-medium text-gold hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @gocozycaravan
+                  </a>
+                </li>
+                <li>
                   <span className="block text-xs uppercase text-zinc-500">Location</span>
                   {SITE.address}
                 </li>
               </ul>
             </div>
             <p className="text-sm text-zinc-500">
-              Typical response time: same day on WhatsApp, within 24 hours on email.
+              Fill the form to open WhatsApp with your message — same-day replies on WhatsApp.
             </p>
           </div>
           <div className="lg:col-span-3">

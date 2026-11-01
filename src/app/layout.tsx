@@ -19,11 +19,22 @@ export const metadata: Metadata = {
   },
   description: SITE.description,
   keywords: [
-    "caravan rental Pune",
-    "luxury caravan Maharashtra",
+    "caravan rental India",
+    "luxury caravan India",
     "Go Cozy Caravan",
     "motorhome India",
+    "Urbania rental",
+    "caravan rental Pune",
   ],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
