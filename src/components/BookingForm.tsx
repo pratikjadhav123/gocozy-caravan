@@ -96,6 +96,9 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<"idle" | "success">("idle");
   const [waHref, setWaHref] = useState("");
+  const [reference, setReference] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     setForm((prev) => ({
@@ -131,35 +134,71 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
 
+    setSubmitting(true);
+    setSubmitError("");
+
     const vehicle = getVehicle(form.vehicleId) ?? VEHICLES[0];
     const phoneDigits = digitsOnly(form.phone);
-    const text = [
-      `Hi ${SITE.name}, I want to book a caravan.`,
-      "",
-      `Name: ${form.name.trim()}`,
-      `Phone: +91 ${phoneDigits}`,
-      form.email.trim() ? `Email: ${form.email.trim()}` : null,
-      form.guests.trim() ? `Guests: ${form.guests.trim()}` : null,
-      `Vehicle: ${vehicle.name} (${vehicleCapacityLabel(vehicle)})`,
-      `Pick-up: ${formatDisplayDate(form.pickupDate)}`,
-      `Return: ${formatDisplayDate(form.returnDate)}`,
-      `Destination: ${form.destination.trim()}`,
-      form.message.trim() ? `Notes: ${form.message.trim()}` : null,
-      "",
-      "Please confirm availability and pricing. Thank you!",
-    ]
-      .filter((line) => line !== null)
-      .join("\n");
+    const payload = {
+      name: form.name.trim(),
+      phone: phoneDigits,
+      email: form.email.trim(),
+      guests: form.guests.trim() || undefined,
+      vehicleId: form.vehicleId,
+      pickupDate: form.pickupDate,
+      returnDate: form.returnDate,
+      destination: form.destination.trim(),
+      message: form.message.trim(),
+      whatsappSent: true,
+    };
 
-    const href = whatsappUrl(text);
-    setWaHref(href);
-    setStatus("success");
-    openWhatsApp(href);
-    setForm(blankForm);
+    try {
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json()) as { ok: boolean; reference?: string; error?: string };
+      if (!res.ok || !data.ok || !data.reference) {
+        setSubmitError(data.error || "Could not create booking. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      const text = [
+        `Hi ${SITE.name}, I want to book a caravan.`,
+        `Booking Ref: ${data.reference}`,
+        "",
+        `Name: ${payload.name}`,
+        `Phone: +91 ${phoneDigits}`,
+        payload.email ? `Email: ${payload.email}` : null,
+        payload.guests ? `Guests: ${payload.guests}` : null,
+        `Vehicle: ${vehicle.name} (${vehicleCapacityLabel(vehicle)})`,
+        `Pick-up: ${formatDisplayDate(payload.pickupDate)}`,
+        `Return: ${formatDisplayDate(payload.returnDate)}`,
+        `Destination: ${payload.destination}`,
+        payload.message ? `Notes: ${payload.message}` : null,
+        "",
+        "Please confirm availability and pricing. Thank you!",
+      ]
+        .filter((line) => line !== null)
+        .join("\n");
+
+      const href = whatsappUrl(text);
+      setReference(data.reference);
+      setWaHref(href);
+      setStatus("success");
+      openWhatsApp(href);
+      setForm(blankForm);
+    } catch {
+      setSubmitError("Network error. Check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function field(id: keyof FormState, label: string, node: React.ReactNode) {
@@ -182,10 +221,10 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
     <div className="animate-fade-up rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 shadow-xl sm:p-8">
       {status === "success" ? (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gold">WhatsApp booking ready</p>
+          <p className="text-lg font-semibold text-gold">Booking saved</p>
+          <p className="mt-2 font-mono text-sm text-white">Ref: {reference}</p>
           <p className="mt-2 text-sm text-zinc-400">
-            If WhatsApp did not open, tap the button below. Send the pre-filled message to confirm
-            your slot.
+            Your booking is in our CRM. Send the WhatsApp message so our team can confirm the slot.
           </p>
           <a
             href={waHref}
@@ -198,7 +237,10 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
           <button
             type="button"
             className="mt-4 block w-full text-sm text-zinc-500 underline"
-            onClick={() => setStatus("idle")}
+            onClick={() => {
+              setStatus("idle");
+              setReference("");
+            }}
           >
             Submit another request
           </button>
@@ -352,16 +394,23 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
             />
           )}
 
+          {submitError ? (
+            <p className="text-center text-sm text-red-400" role="alert">
+              {submitError}
+            </p>
+          ) : null}
+
           <button
             type="submit"
-            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99]"
+            disabled={submitting}
+            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold uppercase tracking-wide text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
           >
-            Request booking on WhatsApp
+            {submitting ? "Saving booking…" : "Request booking on WhatsApp"}
           </button>
 
           <p className="text-center text-xs text-zinc-500">
-            Submitting opens WhatsApp with your booking details to {SITE.phoneDisplay}. No payment
-            on the website.
+            Saves to our booking CRM with a reference number, then opens WhatsApp to{" "}
+            {SITE.phoneDisplay}.
           </p>
         </form>
       )}

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { saveContact } from "@/lib/bookings-store";
+import { createContact } from "@/lib/bookings";
 
 export async function POST(request: Request) {
   try {
@@ -20,16 +20,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Invalid phone" }, { status: 400 });
     }
 
-    await saveContact({
+    const contact = await createContact({
       name: body.name.trim(),
       phone,
-      email: body.email?.trim() ?? "",
-      subject: body.subject?.trim() ?? "",
+      email: body.email?.trim() || "",
+      subject: body.subject?.trim() || "",
       message: body.message.trim(),
     });
 
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
+    return NextResponse.json({
+      ok: true,
+      reference: contact.reference_no,
+      contactId: contact.id,
+    });
+  } catch (err) {
+    console.error("[api/contact]", err);
+    return NextResponse.json({ ok: false, error: "Could not save enquiry" }, { status: 500 });
   }
 }

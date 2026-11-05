@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -30,7 +27,7 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
-      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     shortcut: "/favicon.ico",
@@ -44,20 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={outfit.variable}>
-      <body className="flex min-h-dvh flex-col bg-background text-foreground antialiased">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:text-charcoal"
-        >
-          Skip to content
-        </a>
-        <Header />
-        <main id="main-content" className="flex-1 pb-20 sm:pb-6">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppFloat />
-      </body>
+      <body className="min-h-dvh bg-background text-foreground antialiased">{children}</body>
     </html>
   );
 }

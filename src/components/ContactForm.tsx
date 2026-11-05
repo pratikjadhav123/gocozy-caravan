@@ -26,6 +26,9 @@ export function ContactForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "success">("idle");
   const [waHref, setWaHref] = useState("");
+  const [reference, setReference] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   function validate() {
     const e: Record<string, string> = {};
@@ -38,39 +41,69 @@ export function ContactForm() {
     return Object.keys(e).length === 0;
   }
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
 
+    setSubmitting(true);
+    setSubmitError("");
     const phoneDigits = digitsOnly(phone);
-    const text = [
-      `Hi ${SITE.name}, new enquiry from the website.`,
-      "",
-      `Name: ${name.trim()}`,
-      `Phone: +91 ${phoneDigits}`,
-      email.trim() ? `Email: ${email.trim()}` : null,
-      subject.trim() ? `Subject: ${subject.trim()}` : null,
-      `Message: ${message.trim()}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
 
-    const href = whatsappUrl(text);
-    setWaHref(href);
-    setStatus("success");
-    openWhatsApp(href);
-    setName("");
-    setPhone("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phoneDigits,
+          email: email.trim(),
+          subject: subject.trim(),
+          message: message.trim(),
+        }),
+      });
+      const data = (await res.json()) as { ok: boolean; reference?: string; error?: string };
+      if (!res.ok || !data.ok || !data.reference) {
+        setSubmitError(data.error || "Could not save enquiry");
+        setSubmitting(false);
+        return;
+      }
+
+      const text = [
+        `Hi ${SITE.name}, new enquiry from the website.`,
+        `Enquiry Ref: ${data.reference}`,
+        "",
+        `Name: ${name.trim()}`,
+        `Phone: +91 ${phoneDigits}`,
+        email.trim() ? `Email: ${email.trim()}` : null,
+        subject.trim() ? `Subject: ${subject.trim()}` : null,
+        `Message: ${message.trim()}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      const href = whatsappUrl(text);
+      setReference(data.reference);
+      setWaHref(href);
+      setStatus("success");
+      openWhatsApp(href);
+      setName("");
+      setPhone("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <div className="animate-fade-up rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 sm:p-8">
       {status === "success" ? (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gold">WhatsApp message ready</p>
+          <p className="text-lg font-semibold text-gold">Enquiry saved</p>
+          <p className="mt-2 font-mono text-sm text-white">Ref: {reference}</p>
           <p className="mt-2 text-sm text-zinc-400">
             If WhatsApp did not open, tap below to send your enquiry.
           </p>
@@ -85,7 +118,10 @@ export function ContactForm() {
           <button
             type="button"
             className="mt-4 block w-full text-sm text-zinc-500 underline"
-            onClick={() => setStatus("idle")}
+            onClick={() => {
+              setStatus("idle");
+              setReference("");
+            }}
           >
             Send another message
           </button>
@@ -159,14 +195,16 @@ export function ContactForm() {
             />
             {errors.message ? <p className="mt-1 text-sm text-red-400">{errors.message}</p> : null}
           </div>
+          {submitError ? <p className="text-sm text-red-400">{submitError}</p> : null}
           <button
             type="submit"
-            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99]"
+            disabled={submitting}
+            className="w-full rounded-full bg-gold py-3.5 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
           >
-            Send on WhatsApp
+            {submitting ? "Saving…" : "Send on WhatsApp"}
           </button>
           <p className="text-center text-xs text-zinc-500">
-            Opens WhatsApp with your message to {SITE.phoneDisplay}.
+            Saves to CRM with a reference, then opens WhatsApp to {SITE.phoneDisplay}.
           </p>
         </form>
       )}
