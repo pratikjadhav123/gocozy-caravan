@@ -106,7 +106,7 @@ export default function HomePage() {
                 key={vehicle.id}
                 className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
               >
-                <div className="relative aspect-[4/3] bg-zinc-800">
+                <Link href={`/vehicles/${vehicle.id}`} className="relative block aspect-[4/3] bg-zinc-800">
                   <Image
                     src={vehicle.image}
                     alt={vehicle.name}
@@ -114,16 +114,20 @@ export default function HomePage() {
                     className="object-cover transition duration-500 hover:scale-105"
                     sizes="(max-width:768px) 100vw, 33vw"
                   />
-                </div>
+                </Link>
                 <div className="p-5">
-                  <h3 className="font-display text-lg font-semibold text-white">{vehicle.name}</h3>
+                  <Link href={`/vehicles/${vehicle.id}`}>
+                    <h3 className="font-display text-lg font-semibold text-white hover:text-gold">
+                      {vehicle.name}
+                    </h3>
+                  </Link>
                   <p className="mt-1 text-sm text-zinc-400">{vehicleCapacityLabel(vehicle)}</p>
                   <p className="mt-3 text-sm text-zinc-300">{vehicle.highlight}</p>
                   <Link
-                    href="/book"
+                    href={`/vehicles/${vehicle.id}`}
                     className="mt-4 inline-block text-sm font-semibold text-gold transition hover:underline"
                   >
-                    Check availability
+                    View details & availability →
                   </Link>
                 </div>
               </article>

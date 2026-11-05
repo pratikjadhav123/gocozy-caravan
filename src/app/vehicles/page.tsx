@@ -1,19 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { FaqAccordion } from "@/components/FaqAccordion";
 import { PageHero } from "@/components/PageHero";
 import { VEHICLES, vehicleCapacityLabel } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Vehicles",
+  title: "Our Fleet",
 };
 
 export default function VehiclesPage() {
   return (
     <>
       <PageHero
-        title="Our vehicles"
-        subtitle="Go Cozy Caravan lounge units and Urbaniya for larger groups — ready for trips across India."
+        title="Our fleet"
+        subtitle="Three vehicles for India trips — open any van for photos, specs, and Check availability to book that unit."
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">
@@ -24,7 +25,10 @@ export default function VehiclesPage() {
                 index % 2 === 1 ? "lg:[&>div:first-child]:order-2" : ""
               }`}
             >
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10">
+              <Link
+                href={`/vehicles/${vehicle.id}`}
+                className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10"
+              >
                 <Image
                   src={vehicle.image}
                   alt={vehicle.name}
@@ -32,7 +36,7 @@ export default function VehiclesPage() {
                   className="object-cover transition duration-700 hover:scale-105"
                   sizes="(max-width:1024px) 100vw, 50vw"
                 />
-              </div>
+              </Link>
               <div className="animate-fade-up">
                 <h2 className="font-display text-2xl font-bold text-white">{vehicle.name}</h2>
                 <p className="mt-2 text-gold">{vehicleCapacityLabel(vehicle)}</p>
@@ -42,12 +46,20 @@ export default function VehiclesPage() {
                   <li>Flexible pick-up across India</li>
                   <li>Insurance & roadside assistance on trips</li>
                 </ul>
-                <Link
-                  href="/book"
-                  className="mt-6 inline-flex rounded-full bg-gold px-6 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-105"
-                >
-                  Book this caravan
-                </Link>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link
+                    href={`/vehicles/${vehicle.id}`}
+                    className="inline-flex rounded-full bg-gold px-6 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light hover:scale-105"
+                  >
+                    View details
+                  </Link>
+                  <Link
+                    href={`/book?vehicle=${vehicle.id}`}
+                    className="inline-flex rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
+                  >
+                    Check availability
+                  </Link>
+                </div>
               </div>
             </article>
           ))}
@@ -63,6 +75,7 @@ export default function VehiclesPage() {
           </div>
         </div>
       </section>
+      <FaqAccordion />
     </>
   );
 }

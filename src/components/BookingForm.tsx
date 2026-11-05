@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DESTINATIONS,
   SITE,
   VEHICLES,
+  getVehicle,
   vehicleCapacityLabel,
   whatsappUrl,
 } from "@/lib/constants";
@@ -20,22 +21,55 @@ type FormState = {
   message: string;
 };
 
-const initial: FormState = {
-  name: "",
-  phone: "",
-  email: "",
-  vehicleId: VEHICLES[0].id,
-  pickupDate: "",
-  returnDate: "",
-  destination: DESTINATIONS[0],
-  message: "",
+type BookingFormProps = {
+  defaultVehicleId?: string;
+  defaultDestination?: string;
 };
 
-export function BookingForm() {
-  const [form, setForm] = useState<FormState>(initial);
+export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFormProps) {
+  const resolvedVehicleId = useMemo(() => {
+    if (defaultVehicleId && getVehicle(defaultVehicleId)) return defaultVehicleId;
+    return VEHICLES[0].id;
+  }, [defaultVehicleId]);
+
+  const resolvedDestination = useMemo(() => {
+    if (!defaultDestination) return DESTINATIONS[0];
+    const exact = DESTINATIONS.find(
+      (d) => d.toLowerCase() === defaultDestination.toLowerCase()
+    );
+    if (exact) return exact;
+    const partial = DESTINATIONS.find((d) =>
+      defaultDestination.toLowerCase().includes(d.toLowerCase())
+    );
+    return partial ?? defaultDestination;
+  }, [defaultDestination]);
+
+  const blankForm = useMemo<FormState>(
+    () => ({
+      name: "",
+      phone: "",
+      email: "",
+      vehicleId: resolvedVehicleId,
+      pickupDate: "",
+      returnDate: "",
+      destination: resolvedDestination,
+      message: "",
+    }),
+    [resolvedVehicleId, resolvedDestination]
+  );
+
+  const [form, setForm] = useState<FormState>(blankForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<"idle" | "success">("idle");
   const [waHref, setWaHref] = useState("");
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      vehicleId: resolvedVehicleId,
+      destination: resolvedDestination,
+    }));
+  }, [resolvedVehicleId, resolvedDestination]);
 
   function validate(): boolean {
     const next: Partial<Record<keyof FormState, string>> = {};
@@ -79,7 +113,7 @@ export function BookingForm() {
     setWaHref(href);
     setStatus("success");
     window.open(href, "_blank", "noopener,noreferrer");
-    setForm(initial);
+    setForm(blankForm);
   }
 
   function field(id: keyof FormState, label: string, node: React.ReactNode) {

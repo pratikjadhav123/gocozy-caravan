@@ -38,8 +38,8 @@ export function Header() {
               <Link
                 key={href}
                 href={href}
-                className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
-                  active
+                className={`rounded-full px-2.5 py-2 text-xs font-medium transition-colors xl:px-3 xl:text-sm ${
+                  active || (href !== "/" && pathname.startsWith(href))
                     ? "bg-gold/15 text-gold"
                     : "text-zinc-300 hover:bg-white/5 hover:text-white"
                 }`}
@@ -119,7 +119,7 @@ export function Header() {
             onClick={() => setOpen(false)}
             className="mt-2 rounded-full bg-gold py-3 text-center font-semibold text-charcoal"
           >
-            Book Now
+            Book your caravan
           </Link>
         </nav>
       </div>
