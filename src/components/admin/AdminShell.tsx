@@ -17,6 +17,7 @@ function roleLabel(role: string) {
 }
 
 function pageTitle(pathname: string) {
+  if (pathname.startsWith("/admin/bookings/new")) return "New booking";
   if (pathname.startsWith("/admin/bookings")) return "Bookings";
   if (pathname.startsWith("/admin/contacts")) return "Enquiries";
   return "Dashboard";

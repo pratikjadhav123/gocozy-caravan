@@ -52,10 +52,16 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <p className="text-sm text-zinc-400">
           Filter by status, search, or pickup dates — then open a booking to confirm.
         </p>
+        <Link
+          href="/admin/bookings/new"
+          className="rounded-full bg-gold px-4 py-2 text-xs font-bold text-charcoal hover:bg-gold-light"
+        >
+          + New booking
+        </Link>
       </div>
 
       <BookingsFilterBar

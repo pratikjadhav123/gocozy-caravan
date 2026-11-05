@@ -1,38 +1,60 @@
-import { listContacts } from "@/lib/bookings";
-import { ContactStatusButtons } from "@/components/admin/ContactStatusButtons";
+import Link from "next/link";
+import { EnquiryCard } from "@/components/admin/EnquiryCard";
+import { EnquiriesFilterTabs } from "@/components/admin/EnquiriesFilterTabs";
+import { getContactCounts, listContacts, type ContactRow } from "@/lib/bookings";
 
-export default async function AdminContactsPage() {
-  const contacts = await listContacts(150);
+type PageProps = {
+  searchParams: Promise<{ status?: string }>;
+};
+
+export default async function AdminContactsPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  const statusParam = sp.status || "all";
+  const status =
+    statusParam === "new" || statusParam === "replied" || statusParam === "closed"
+      ? statusParam
+      : "all";
+
+  const [contacts, counts] = await Promise.all([
+    listContacts({ status, limit: 150 }),
+    getContactCounts(),
+  ]);
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm text-zinc-400">Contact form messages with enquiry references.</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <p className="text-sm text-zinc-400">
+          Reply on WhatsApp → discuss → Close, or Book this customer in CRM.
+        </p>
+        <Link
+          href="/admin/bookings/new"
+          className="rounded-full bg-gold px-4 py-2 text-xs font-bold text-charcoal hover:bg-gold-light"
+        >
+          + New booking
+        </Link>
       </div>
+
+      <EnquiriesFilterTabs active={status} counts={counts} />
 
       <div className="space-y-4">
         {contacts.length === 0 ? (
           <p className="rounded-2xl border border-white/10 px-4 py-10 text-center text-zinc-500">
-            No enquiries yet.
+            No enquiries in this tab.
           </p>
         ) : (
-          contacts.map((c) => (
-            <article key={c.id} className="rounded-2xl border border-white/10 bg-charcoal-light p-5">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-gold">{c.reference_no}</p>
-                  <h3 className="mt-1 font-display text-lg font-bold text-white">{c.name}</h3>
-                  <p className="text-sm text-zinc-400">
-                    +91 {c.phone}
-                    {c.email ? ` · ${c.email}` : ""}
-                  </p>
-                </div>
-                <ContactStatusButtons id={c.id} status={c.status} />
-              </div>
-              {c.subject ? <p className="mt-3 text-sm font-medium text-zinc-200">{c.subject}</p> : null}
-              <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-400">{c.message}</p>
-              <p className="mt-3 text-xs text-zinc-600">{c.created_at}</p>
-            </article>
+          contacts.map((c: ContactRow) => (
+            <EnquiryCard
+              key={c.id}
+              id={c.id}
+              reference={c.reference_no}
+              status={c.status}
+              name={c.name}
+              phone={c.phone}
+              email={c.email}
+              subject={c.subject}
+              message={c.message}
+              createdAt={c.created_at}
+            />
           ))
         )}
       </div>

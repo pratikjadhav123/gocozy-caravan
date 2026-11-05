@@ -64,6 +64,7 @@ export type CreateBookingInput = {
   destination: string;
   message?: string;
   whatsappSent?: boolean;
+  source?: string;
 };
 
 function randomPart(len = 4) {
@@ -107,7 +108,7 @@ export async function createBooking(input: CreateBookingInput): Promise<BookingR
         ) VALUES (
           :reference_no, 'new', :customer_name, :phone, :email, :guests,
           :vehicle_id, :vehicle_name, :pickup_date, :return_date, :destination,
-          :message, 'website', :whatsapp_sent
+          :message, :source, :whatsapp_sent
         )`,
         {
           reference_no: reference,
@@ -121,6 +122,7 @@ export async function createBooking(input: CreateBookingInput): Promise<BookingR
           return_date: input.returnDate,
           destination: input.destination,
           message: input.message || null,
+          source: input.source || "website",
           whatsapp_sent: input.whatsappSent ? 1 : 0,
         }
       );
@@ -340,11 +342,41 @@ export async function confirmBooking(
   return getBookingById(id);
 }
 
-export async function listContacts(limit = 100) {
-  const safeLimit = Math.min(Math.max(Number(limit) || 100, 1), 300);
+export async function listContacts(options?: {
+  status?: ContactRow["status"] | "all";
+  limit?: number;
+}) {
+  const safeLimit = Math.min(Math.max(Number(options?.limit ?? 100) || 100, 1), 300);
+  const status = options?.status || "all";
+  if (status !== "all") {
+    return queryRows<ContactRow[]>(
+      `SELECT * FROM contacts WHERE status = :status ORDER BY created_at DESC LIMIT ${safeLimit}`,
+      { status }
+    );
+  }
   return queryRows<ContactRow[]>(
     `SELECT * FROM contacts ORDER BY created_at DESC LIMIT ${safeLimit}`
   );
+}
+
+export async function getContactById(id: number) {
+  const rows = await queryRows<ContactRow[]>(`SELECT * FROM contacts WHERE id = :id LIMIT 1`, {
+    id,
+  });
+  return rows[0] ?? null;
+}
+
+export async function getContactCounts() {
+  const rows = await queryRows<(RowDataPacket & { status: string; total: number })[]>(
+    `SELECT status, COUNT(*) AS total FROM contacts GROUP BY status`
+  );
+  const byStatus = Object.fromEntries(rows.map((r) => [r.status, Number(r.total)]));
+  return {
+    all: Object.values(byStatus).reduce((a, b) => a + b, 0),
+    new: Number(byStatus.new || 0),
+    replied: Number(byStatus.replied || 0),
+    closed: Number(byStatus.closed || 0),
+  };
 }
 
 export async function updateContactStatus(
