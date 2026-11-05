@@ -22,6 +22,8 @@ export default function AmenitiesPage() {
       <PageHero
         title="Amenities"
         subtitle="Premium finishes, thoughtful storage, and modern conveniences — designed for long drives and overnight stays."
+        image="/images/gallery/interior-lounge-1.png"
+        imageAlt="Go Cozy caravan lounge interior"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">

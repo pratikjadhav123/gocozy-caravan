@@ -15,6 +15,8 @@ export default function VehiclesPage() {
       <PageHero
         title="Our fleet"
         subtitle="Three vehicles for India trips — open any van for photos, specs, and Check availability to book that unit."
+        image="/images/fleet/urbania-front.png"
+        imageAlt="Go Cozy fleet vehicles"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">

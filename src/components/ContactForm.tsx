@@ -3,6 +3,20 @@
 import { useState } from "react";
 import { SITE, whatsappUrl } from "@/lib/constants";
 
+function digitsOnly(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function openWhatsApp(href: string) {
+  const anchor = document.createElement("a");
+  anchor.href = href;
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
 export function ContactForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -16,10 +30,9 @@ export function ContactForm() {
   function validate() {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Name is required";
+    const phoneDigits = digitsOnly(phone);
     if (!phone.trim()) e.phone = "Phone is required";
-    else if (!/^[0-9]{10}$/.test(phone.replace(/\D/g, ""))) {
-      e.phone = "Enter a valid 10-digit number";
-    }
+    else if (phoneDigits.length !== 10) e.phone = "Enter a valid 10-digit number";
     if (!message.trim()) e.message = "Message is required";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -29,10 +42,12 @@ export function ContactForm() {
     ev.preventDefault();
     if (!validate()) return;
 
+    const phoneDigits = digitsOnly(phone);
     const text = [
       `Hi ${SITE.name}, new enquiry from the website.`,
+      "",
       `Name: ${name.trim()}`,
-      `Phone: ${phone.trim()}`,
+      `Phone: +91 ${phoneDigits}`,
       email.trim() ? `Email: ${email.trim()}` : null,
       subject.trim() ? `Subject: ${subject.trim()}` : null,
       `Message: ${message.trim()}`,
@@ -43,7 +58,7 @@ export function ContactForm() {
     const href = whatsappUrl(text);
     setWaHref(href);
     setStatus("success");
-    window.open(href, "_blank", "noopener,noreferrer");
+    openWhatsApp(href);
     setName("");
     setPhone("");
     setEmail("");
@@ -55,9 +70,9 @@ export function ContactForm() {
     <div className="animate-fade-up rounded-2xl border border-white/10 bg-charcoal-light/80 p-6 sm:p-8">
       {status === "success" ? (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gold">Opening WhatsApp…</p>
+          <p className="text-lg font-semibold text-gold">WhatsApp message ready</p>
           <p className="mt-2 text-sm text-zinc-400">
-            Your message is ready — send it on WhatsApp and we will reply soon.
+            If WhatsApp did not open, tap below to send your enquiry.
           </p>
           <a
             href={waHref}
@@ -87,6 +102,7 @@ export function ContactForm() {
                 className="input-field"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
               {errors.name ? <p className="mt-1 text-sm text-red-400">{errors.name}</p> : null}
             </div>
@@ -97,9 +113,11 @@ export function ContactForm() {
               <input
                 id="contact-phone"
                 type="tel"
+                inputMode="numeric"
                 className="input-field"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                required
               />
               {errors.phone ? <p className="mt-1 text-sm text-red-400">{errors.phone}</p> : null}
             </div>
@@ -137,6 +155,7 @@ export function ContactForm() {
               className="input-field resize-y"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              required
             />
             {errors.message ? <p className="mt-1 text-sm text-red-400">{errors.message}</p> : null}
           </div>
@@ -147,7 +166,7 @@ export function ContactForm() {
             Send on WhatsApp
           </button>
           <p className="text-center text-xs text-zinc-500">
-            Opens WhatsApp with your message — no backend required.
+            Opens WhatsApp with your message to {SITE.phoneDisplay}.
           </p>
         </form>
       )}

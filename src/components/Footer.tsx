@@ -11,11 +11,11 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <Image
-            src="/images/logo.png"
+            src="/images/logo-header.png"
             alt={`${SITE.name} logo`}
-            width={220}
-            height={88}
-            className="h-16 w-auto sm:h-[4.5rem]"
+            width={744}
+            height={160}
+            className="h-10 w-auto max-w-[220px] object-contain object-left sm:h-11 sm:max-w-[250px]"
           />
           <p className="mt-4 text-sm leading-relaxed">{SITE.description}</p>
         </div>

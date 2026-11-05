@@ -25,6 +25,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             ? `You selected ${selected.name}. Fill dates — WhatsApp opens with this vehicle ready.`
             : "Fill your dates and vehicle — we open WhatsApp so our team can confirm availability."
         }
+        image={selected?.image ?? "/images/slider/slide-3.png"}
+        imageAlt={selected ? selected.name : "Book Go Cozy Caravan"}
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-5">

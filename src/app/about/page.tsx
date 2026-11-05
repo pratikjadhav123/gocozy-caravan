@@ -13,6 +13,8 @@ export default function AboutPage() {
       <PageHero
         title="About Go Cozy Caravan"
         subtitle="Hotel-level comfort on the open road — curated for families, friends, and explorers across all India."
+        image="/images/fleet/caravan-awning.png"
+        imageAlt="Go Cozy caravan outdoor setup"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
@@ -28,7 +30,7 @@ export default function AboutPage() {
           <div className="animate-fade-up space-y-4 text-zinc-300">
             <p>
               <strong className="text-white">{SITE.name}</strong> operates premium Force Traveller
-              caravans and Urbaniya coaches customised with lounge seating, climate control,
+              caravans and Urbania coaches customised with lounge seating, climate control,
               entertainment, kitchen options, and private bathroom facilities — so you can focus
               on the journey, not the logistics.
             </p>

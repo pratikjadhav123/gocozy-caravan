@@ -12,12 +12,18 @@ export default function BlogPage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-white/10">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/images/gallery/exterior-side-road.png)" }}
-        />
-        <div className="absolute inset-0 bg-charcoal/85" />
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/fleet/urbania-hills.png"
+            alt="Go Cozy on the road"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/88 to-charcoal/55" />
+        </div>
+        <div className="relative mx-auto flex min-h-[240px] max-w-6xl flex-col justify-end px-4 py-14 sm:min-h-[300px] sm:px-6 sm:py-20">
           <nav className="text-sm text-zinc-400">
             <Link href="/" className="hover:text-gold">
               Home

@@ -15,6 +15,8 @@ export default function DestinationsPage() {
       <PageHero
         title="Destinations across India"
         subtitle="Pick a route vibe — hills, coast, desert, or heritage — then book the Go Cozy van that fits your group."
+        image="/images/slider/slide-lifestyle.png"
+        imageAlt="Caravan travel destinations across India"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">

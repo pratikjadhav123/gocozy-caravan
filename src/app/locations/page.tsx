@@ -15,6 +15,8 @@ export default function LocationsPage() {
       <PageHero
         title="Caravan rental locations in India"
         subtitle="Pick up near you and head for the road — verified Go Cozy vehicles with WhatsApp booking support."
+        image="/images/slider/slide-1.png"
+        imageAlt="Go Cozy caravan pickup across India"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">

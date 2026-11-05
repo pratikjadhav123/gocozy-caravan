@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
 import { PageHero } from "@/components/PageHero";
@@ -15,10 +16,21 @@ export default function ContactPage() {
       <PageHero
         title="Contact us"
         subtitle="Questions about routes, pricing, or availability? Message us anytime."
+        image="/images/fleet/urbania-palace.png"
+        imageAlt="Go Cozy Urbania ready for your trip"
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-5">
           <div className="space-y-6 lg:col-span-2">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src="/images/slider/slide-2.png"
+                alt="Go Cozy caravan on the road"
+                fill
+                className="object-cover"
+                sizes="(max-width:1024px) 100vw, 40vw"
+              />
+            </div>
             <div className="rounded-2xl border border-white/10 bg-charcoal-light p-6">
               <h2 className="font-display text-lg font-semibold text-white">Direct contact</h2>
               <ul className="mt-4 space-y-3 text-sm text-zinc-300">

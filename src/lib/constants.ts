@@ -82,7 +82,7 @@ export const FAQS = [
   },
   {
     q: "How many people can sleep on board?",
-    a: "Go Cozy Caravan units sleep about 2 (convertible lounge). Urbaniya is a spacious 15–16 seater for day / group travel — overnight layouts are confirmed when you book.",
+    a: "Go Cozy Caravan units sleep about 2 (convertible lounge). Urbania is a spacious 15–16 seater for day / group travel — overnight layouts are confirmed when you book.",
   },
   {
     q: "What is the cancellation policy?",
@@ -106,14 +106,14 @@ export const VEHICLES = [
     seats: "6–7",
     beds: "2",
     highlight: "LED lounge, smart TV, AC, premium leather seating, fridge",
-    image: "/images/gallery/exterior-side-trees.png",
+    image: "/images/slider/slide-2.png",
     gallery: [
-      { src: "/images/gallery/exterior-side-trees.png", alt: "Go Cozy Caravan exterior" },
+      { src: "/images/slider/slide-2.png", alt: "Go Cozy Caravan exterior front" },
+      { src: "/images/slider/slide-3.png", alt: "Go Cozy Caravan side branding" },
+      { src: "/images/slider/slide-1.png", alt: "Motorhome with outdoor seating" },
       { src: "/images/gallery/interior-lounge-1.png", alt: "LED lounge interior" },
       { src: "/images/gallery/interior-tv.png", alt: "Smart TV entertainment" },
-      { src: "/images/gallery/interior-bed.png", alt: "Convertible sleeping area" },
       { src: "/images/gallery/interior-bathroom.png", alt: "Onboard bathroom" },
-      { src: "/images/hero-van.png", alt: "Van front view" },
     ],
     about:
       "A premium Force Traveller caravan fitted with quilted leather lounge seating, climate control, smart TV, and a fridge — perfect for weekend escapes and overnight road trips across India.",
@@ -140,14 +140,14 @@ export const VEHICLES = [
     seats: "6–7",
     beds: "2",
     highlight: "LED lounge, smart TV, AC, premium leather seating, kitchen, fridge, oven",
-    image: "/images/gallery/family-lounge.png",
+    image: "/images/fleet/caravan-night.png",
     gallery: [
+      { src: "/images/fleet/caravan-night.png", alt: "Kitchen caravan night setup" },
+      { src: "/images/fleet/caravan-awning.png", alt: "Awning and outdoor living" },
+      { src: "/images/slider/slide-4.png", alt: "Caravan with stairs and awning" },
       { src: "/images/gallery/family-lounge.png", alt: "Family lounge seating" },
-      { src: "/images/gallery/interior-sofa.png", alt: "Quilted sofa seating" },
       { src: "/images/gallery/interior-kitchen.png", alt: "Kitchen and fittings" },
-      { src: "/images/gallery/interior-aisle.png", alt: "Cabin aisle view" },
-      { src: "/images/gallery/interior-bathroom.png", alt: "Washroom" },
-      { src: "/images/gallery/exterior-side-road.png", alt: "Exterior map wrap" },
+      { src: "/images/gallery/interior-sofa.png", alt: "Quilted sofa seating" },
     ],
     about:
       "Built like our flagship lounge caravan, with a full kitchen setup — fridge and oven — so families can cook light meals and stay longer on multi-day journeys.",
@@ -168,23 +168,23 @@ export const VEHICLES = [
     ],
   },
   {
-    id: "cozy-urbaniya",
-    name: "Go Cozy Urbaniya",
-    tagline: "15–16 seater Urbaniya — AC & smart sound for group travel",
+    id: "cozy-urbania",
+    name: "Go Cozy Urbania",
+    tagline: "15–16 seater Urbania — AC & smart sound for group travel",
     seats: "15–16",
     beds: null,
     highlight: "AC, smart sound system — spacious group travel",
-    image: "/images/gallery/interior-lounge-1.png",
+    image: "/images/fleet/urbania-hills.png",
     gallery: [
-      { src: "/images/gallery/interior-lounge-1.png", alt: "Urbania spacious cabin" },
+      { src: "/images/fleet/urbania-hills.png", alt: "Go Cozy Urbania front three-quarter view" },
+      { src: "/images/fleet/urbania-heritage.png", alt: "Urbania parked at landmark" },
+      { src: "/images/fleet/urbania-palace.png", alt: "Urbania at heritage palace venue" },
+      { src: "/images/gallery/interior-lounge-1.png", alt: "Spacious cabin seating" },
       { src: "/images/gallery/interior-lounge-2.png", alt: "Group seating layout" },
-      { src: "/images/gallery/interior-seating.png", alt: "Premium seating" },
-      { src: "/images/gallery/interior-tv.png", alt: "Cabin entertainment" },
-      { src: "/images/hero-van-side.png", alt: "Vehicle exterior side" },
-      { src: "/images/gallery/exterior-rear.png", alt: "Rear exterior view" },
+      { src: "/images/gallery/family-lounge.png", alt: "Group travel lounge" },
     ],
     about:
-      "Go Cozy Urbaniya is built for larger groups — office outings, temple trips, and celebrations. Spacious 15–16 seating with AC and a smart sound system for a comfortable ride.",
+      "Go Cozy Urbania is built for larger groups — office outings, temple trips, and celebrations. Spacious 15–16 seating with AC and a smart sound system for a comfortable ride.",
     specs: [
       { label: "Seats", value: "15–16" },
       { label: "Sleeps", value: "Day travel" },
@@ -206,6 +206,7 @@ export const VEHICLES = [
 export type Vehicle = (typeof VEHICLES)[number];
 
 export function getVehicle(id: string): Vehicle | undefined {
+  if (id === "cozy-urbaniya") return VEHICLES.find((v) => v.id === "cozy-urbania");
   return VEHICLES.find((v) => v.id === id);
 }
 

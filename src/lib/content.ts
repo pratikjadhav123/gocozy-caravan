@@ -7,7 +7,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Maharashtra",
     status: "LIVE",
     blurb: "Hill-station classic from Pune/Mumbai — waterfalls, viewpoints, and easy overnight stops.",
-    image: "/images/gallery/exterior-side-trees.png",
+    image: "/images/slider/slide-1.png",
     drive: "~2 hrs from Pune",
     ideal: "1–2 nights",
   },
@@ -17,7 +17,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Maharashtra",
     status: "LIVE",
     blurb: "Beach weekends, Mandwa ferry loops, and coastal sunsets with your caravan as home base.",
-    image: "/images/hero-van-side.png",
+    image: "/images/slider/slide-lifestyle.png",
     drive: "~3–4 hrs",
     ideal: "2 nights",
   },
@@ -27,7 +27,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Maharashtra",
     status: "LIVE",
     blurb: "Cool weather, strawberry farms, and scenic ghats — perfect for family caravan trips.",
-    image: "/images/gallery/exterior-side-road.png",
+    image: "/images/fleet/caravan-awning.png",
     drive: "~3 hrs from Pune",
     ideal: "2–3 nights",
   },
@@ -37,7 +37,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Goa",
     status: "LIVE",
     blurb: "Beach roads, night markets, and multi-day coastal loops in full lounge comfort.",
-    image: "/images/hero-van.png",
+    image: "/images/slider/slide-4.png",
     drive: "Multi-day",
     ideal: "3–5 nights",
   },
@@ -47,7 +47,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Rajasthan",
     status: "LIVE",
     blurb: "Jaipur, Udaipur, Jaisalmer — forts, dunes, and winter caravan nights under clear skies.",
-    image: "/images/gallery/team-van.png",
+    image: "/images/fleet/urbania-palace.png",
     drive: "Multi-day",
     ideal: "4–7 nights",
   },
@@ -57,7 +57,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Himachal",
     status: "LIVE",
     blurb: "Mountain air, river valleys, and scenic overnight halts with AC lounge comfort.",
-    image: "/images/gallery/exterior-rear.png",
+    image: "/images/fleet/urbania-hills.png",
     drive: "Multi-day",
     ideal: "4–6 nights",
   },
@@ -67,7 +67,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Kerala",
     status: "LIVE",
     blurb: "Munnar greenery and Alleppey vibes — slow travel with kitchen-ready caravans.",
-    image: "/images/gallery/family-lounge.png",
+    image: "/images/fleet/caravan-night.png",
     drive: "Multi-day",
     ideal: "4–6 nights",
   },
@@ -77,7 +77,7 @@ export const TRAVEL_DESTINATIONS = [
     region: "Gujarat",
     status: "LIVE",
     blurb: "White desert camps, winter evenings, and unforgettable caravan nights.",
-    image: "/images/gallery/interior-lounge-2.png",
+    image: "/images/slider/slide-3.png",
     drive: "Multi-day",
     ideal: "3–5 nights",
   },
@@ -90,7 +90,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "HOME BASE",
     blurb: "Our primary hub — easy pickup for Lonavala, Mahabaleshwar, Shirdi, and pan-India tours.",
-    image: "/images/gallery/exterior-side-trees.png",
+    image: "/images/slider/slide-2.png",
     routes: ["Lonavala", "Mahabaleshwar", "Shirdi", "Goa"],
     why: [
       {
@@ -123,7 +123,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "WEEKEND ESCAPES",
     blurb: "Start from Mumbai metro for Lonavala, Alibaug, Nashik, and Konkan coastal loops.",
-    image: "/images/hero-van.png",
+    image: "/images/fleet/urbania-front.png",
     routes: ["Lonavala", "Alibaug", "Nashik", "Konkan"],
     why: [
       {
@@ -156,7 +156,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "NORTH INDIA",
     blurb: "Gateway for Rajasthan, Agra, Rishikesh, and Himachal caravan journeys.",
-    image: "/images/gallery/exterior-side-road.png",
+    image: "/images/fleet/urbania-hills.png",
     routes: ["Jaipur", "Agra", "Rishikesh", "Manali"],
     why: [
       {
@@ -164,7 +164,7 @@ export const PICKUP_LOCATIONS = [
         text: "Desert, heritage, and mountains — plan multi-day loops with comfort onboard.",
       },
       {
-        title: "Group-ready Urbaniya",
+        title: "Group-ready Urbania",
         text: "15–16 seater option for family reunions and corporate day trips.",
       },
       {
@@ -189,7 +189,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "SOUTH INDIA",
     blurb: "South India base for Coorg, Ooty, Mysore, and Kerala leisure loops.",
-    image: "/images/gallery/family-lounge.png",
+    image: "/images/slider/slide-1.png",
     routes: ["Coorg", "Ooty", "Mysore", "Kerala"],
     why: [
       {
@@ -222,7 +222,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "LIVE",
     blurb: "Central south hub — temple towns, weekend getaways, and comfort group travel.",
-    image: "/images/gallery/interior-lounge-1.png",
+    image: "/images/fleet/urbania-heritage.png",
     routes: ["Tirupati", "Goa", "Coastal loops"],
     why: [
       { title: "Temple & leisure trips", text: "Urbania shines for larger family groups." },
@@ -243,7 +243,7 @@ export const PICKUP_LOCATIONS = [
     status: "LIVE",
     badge: "GUJARAT",
     blurb: "Start for Rann of Kutch, Dwarka, and Gujarat heritage road trips.",
-    image: "/images/gallery/exterior-rear.png",
+    image: "/images/fleet/caravan-night.png",
     routes: ["Rann of Kutch", "Dwarka", "Gir region"],
     why: [
       { title: "Desert season ready", text: "Winter Rann trips are a guest favourite." },
@@ -271,7 +271,7 @@ export const BLOG_POSTS = [
     readMins: 8,
     excerpt:
       "How cold desert nights get, what to pack, and why a heated lounge caravan changes the trip.",
-    image: "/images/gallery/exterior-side-road.png",
+    image: "/images/fleet/caravan-night.png",
     content: [
       "Winter is peak season for Gujarat’s white desert and Rajasthan’s dunes. Days are bright; nights drop fast.",
       "With Go Cozy Caravan you sleep in a quilted LED lounge with AC/climate control — pack layers, but you won’t freeze in a tent.",
@@ -288,7 +288,7 @@ export const BLOG_POSTS = [
     readMins: 7,
     excerpt:
       "Chauffeur vs self-drive, overnight parking norms, and simple checks before every departure.",
-    image: "/images/gallery/team-van.png",
+    image: "/images/slider/slide-2.png",
     content: [
       "Most guests prefer a professional chauffeur — especially on ghats and night stretches.",
       "We brief you on halt etiquette, emergency contacts, and a quick walkthrough of lights, AC, and washroom before roll-out.",
@@ -304,11 +304,11 @@ export const BLOG_POSTS = [
     author: "Go Cozy Team",
     readMins: 6,
     excerpt: "Distance, drive time, and why this is the easiest first trip for new caravan travellers.",
-    image: "/images/gallery/exterior-side-trees.png",
+    image: "/images/slider/slide-1.png",
     content: [
       "From Pune, Lonavala is about two hours — ideal for a Friday evening start or Saturday morning.",
       "Use the lounge for monsoon views, kids’ movies on the smart TV, and a calm overnight without hotel check-in stress.",
-      "Book Go Cozy Caravan or Kitchen unit for 1–2 nights; Urbaniya works for larger day groups.",
+      "Book Go Cozy Caravan or Kitchen unit for 1–2 nights; Urbania works for larger day groups.",
     ],
   },
   {
@@ -320,11 +320,11 @@ export const BLOG_POSTS = [
     author: "Go Cozy Team",
     readMins: 10,
     excerpt: "Lonavala, Alibaug, Nashik, and Konkan — pick the loop that matches your group size.",
-    image: "/images/hero-van.png",
+    image: "/images/fleet/urbania-front.png",
     content: [
       "Lonavala is the easiest first trip. Alibaug adds beach energy. Nashik is great for wine-country weekends. Konkan rewards multi-day travellers.",
       "Leave Mumbai outside peak traffic windows when you can — your chauffeur will suggest timing.",
-      "Message us with dates and headcount; we’ll match Caravan, Kitchen, or Urbaniya.",
+      "Message us with dates and headcount; we’ll match Caravan, Kitchen, or Urbania.",
     ],
   },
   {
@@ -336,7 +336,7 @@ export const BLOG_POSTS = [
     author: "Go Cozy Team",
     readMins: 5,
     excerpt: "Chauffeur, walkthrough, insurance basics vs tolls, parking, fuel, and driver night halt.",
-    image: "/images/gallery/interior-lounge-1.png",
+    image: "/images/gallery/interior-lounge-2.png",
     content: [
       "Quotes typically cover vehicle hire, amenities onboard, and support over WhatsApp.",
       "Fuel, tolls, parking, permits, and driver night halt are usually extra — we state this before you pay advance.",
@@ -352,7 +352,7 @@ export const BLOG_POSTS = [
     author: "Go Cozy Team",
     readMins: 5,
     excerpt: "Fridge-only vs kitchen + oven — choose based on trip length and how you like to eat.",
-    image: "/images/gallery/family-lounge.png",
+    image: "/images/fleet/caravan-awning.png",
     content: [
       "Go Cozy Caravan is perfect for short escapes with fridge and LED lounge comfort.",
       "Go Cozy Caravan Kitchen adds kitchen, fridge, and oven for multi-day family trips.",
