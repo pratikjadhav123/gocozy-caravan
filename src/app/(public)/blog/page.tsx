@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { BlogCardShare } from "@/components/BlogCardShare";
 import { getMediaBySlot } from "@/lib/cms";
 import { getCmsBlogPostsForSite } from "@/lib/cms-content";
 
@@ -64,21 +65,24 @@ export default async function BlogPage() {
               key={post.slug}
               className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
             >
-              <Link href={`/blog/${post.slug}`} className="relative block aspect-[16/10]">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition duration-500 hover:scale-105"
-                  sizes="(max-width:768px) 100vw, 50vw"
-                  unoptimized={post.image.startsWith("/uploads/")}
-                />
-                <span className="absolute bottom-3 right-3 flex h-14 w-14 flex-col items-center justify-center rounded-full bg-gold text-center text-[10px] font-bold leading-tight text-charcoal">
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <Link href={`/blog/${post.slug}`} className="absolute inset-0 block">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition duration-500 hover:scale-105"
+                    sizes="(max-width:768px) 100vw, 50vw"
+                    unoptimized={post.image.startsWith("/uploads/")}
+                  />
+                </Link>
+                <BlogCardShare title={post.title} path={`/blog/${post.slug}`} />
+                <span className="pointer-events-none absolute bottom-3 right-3 z-10 flex h-14 w-14 flex-col items-center justify-center rounded-full bg-gold text-center text-[10px] font-bold leading-tight text-charcoal">
                   {post.dateLabel.split(" ").slice(0, 2).map((part) => (
                     <span key={part}>{part}</span>
                   ))}
                 </span>
-              </Link>
+              </div>
               <div className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-gold">
                   {post.category}
