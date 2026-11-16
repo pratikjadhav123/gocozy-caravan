@@ -19,7 +19,7 @@ export const SITE = {
 
 /** Public header — Home is logo only (keeps tabs light). */
 export const NAV_LINKS = [
-  { href: "/vehicles", label: "Experience" },
+  { href: "/vehicles", label: "Our Fleet" },
   { href: "/amenities", label: "Amenities" },
   { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },

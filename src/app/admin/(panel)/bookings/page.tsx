@@ -93,9 +93,9 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
 
       <BookingsFilterBar status={status} q={q} from={from} to={to} resultCount={total} />
 
-      <div className="overflow-hidden rounded-2xl border border-white/10">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
+      <div className="w-full overflow-hidden rounded-2xl border border-white/10">
+        <div className="admin-table-wrap">
+          <table className="w-full min-w-full text-left text-sm">
             <thead className="bg-white/5 text-xs uppercase tracking-wide text-zinc-400">
               <tr>
                 <th className="px-4 py-3">Reference</th>

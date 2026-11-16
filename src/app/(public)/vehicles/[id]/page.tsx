@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { FaqAccordion } from "@/components/FaqAccordion";
+import { FaqSection } from "@/components/FaqSection";
 import { VehicleGallery } from "@/components/VehicleGallery";
 import { VehicleReserveCard } from "@/components/VehicleReserveCard";
 import { getCmsVehicleBySlug, getCmsVehiclesForSite } from "@/lib/cms-content";
@@ -143,7 +143,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <FaqAccordion />
+      <FaqSection />
 
       <section className="border-t border-white/10 py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">

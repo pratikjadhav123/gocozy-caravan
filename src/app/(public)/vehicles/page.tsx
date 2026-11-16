@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FaqAccordion } from "@/components/FaqAccordion";
+import { FaqSection } from "@/components/FaqSection";
 import { PageHero } from "@/components/PageHero";
 import { getCmsVehiclesForSite } from "@/lib/cms-content";
 import { vehicleCapacityLabel } from "@/lib/constants";
@@ -83,7 +83,7 @@ export default async function VehiclesPage() {
           </div>
         </div>
       </section>
-      <FaqAccordion />
+      <FaqSection />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BookingForm } from "@/components/BookingForm";
-import { FaqAccordion } from "@/components/FaqAccordion";
+import { FaqSection } from "@/components/FaqSection";
 import { PageHero } from "@/components/PageHero";
 import { getCmsVehicleBySlug, getCmsVehiclesForSite } from "@/lib/cms-content";
 import { SITE } from "@/lib/constants";
@@ -64,7 +64,7 @@ export default async function BookPage({ searchParams }: BookPageProps) {
           </div>
         </div>
       </section>
-      <FaqAccordion />
+      <FaqSection />
     </>
   );
 }

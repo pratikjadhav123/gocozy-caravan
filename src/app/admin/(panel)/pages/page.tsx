@@ -1,10 +1,12 @@
 import { AmenitiesEditor } from "@/components/admin/AmenitiesEditor";
 import { BlogEditor } from "@/components/admin/BlogEditor";
+import { FaqEditor } from "@/components/admin/FaqEditor";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import { PackagesEditor } from "@/components/admin/PackagesEditor";
 import { TextsEditor } from "@/components/admin/TextsEditor";
 import { ensureTexts, listMedia, listPackages, listTexts, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
 import { listCmsBlogPosts } from "@/lib/cms-content";
+import { listFaqs } from "@/lib/cms-faq";
 import { listAmenities } from "@/lib/cms-home";
 import Link from "next/link";
 
@@ -17,6 +19,7 @@ const SECTIONS = [
   { id: "amenities", label: "Amenities" },
   { id: "packages", label: "Packages" },
   { id: "tour", label: "Tour video" },
+  { id: "faq", label: "FAQ" },
   { id: "blog", label: "Blog" },
 ] as const;
 
@@ -30,6 +33,7 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
   let amenities: Awaited<ReturnType<typeof listAmenities>> = [];
   let packages: Awaited<ReturnType<typeof listPackages>> = [];
   let posts: Awaited<ReturnType<typeof listCmsBlogPosts>> = [];
+  let faqs: Awaited<ReturnType<typeof listFaqs>> = [];
 
   try {
     if (section === "about") {
@@ -41,22 +45,48 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
     } else if (section === "tour") {
       await ensureTexts([...TOUR_TEXT_DEFAULTS]);
       texts = await listTexts();
+    } else if (section === "faq") {
+      await ensureTexts([
+        {
+          text_key: "faq_title",
+          label: "FAQ — Section title",
+          content: "Frequently asked questions",
+        },
+        {
+          text_key: "faq_subtitle",
+          label: "FAQ — Section subtitle",
+          content: "Straight answers before you book your trip.",
+        },
+        {
+          text_key: "footer_blurb",
+          label: "Footer — Brand description",
+          content:
+            "Premium Force Traveller caravans for family trips, weekend getaways, and curated road journeys across India.",
+        },
+      ]);
+      [texts, faqs] = await Promise.all([listTexts(), listFaqs()]);
     } else if (section === "blog") {
       posts = await listCmsBlogPosts();
     }
   } catch {
-    error = "CMS tables missing. Run home/content migrations.";
+    error =
+      section === "faq"
+        ? "FAQ table missing. Run: node scripts/migrate-faqs.mjs"
+        : "CMS tables missing. Run home/content migrations.";
   }
 
   const aboutTexts = texts.filter((t) => t.text_key.startsWith("about_"));
   const amenityTexts = texts.filter((t) => t.text_key.startsWith("home_amenities_"));
   const packageTexts = texts.filter((t) => t.text_key.startsWith("packages_"));
   const tourTexts = texts.filter((t) => t.text_key.startsWith("home_tour_"));
+  const faqTexts = texts.filter(
+    (t) => t.text_key.startsWith("faq_") || t.text_key === "footer_blurb"
+  );
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-zinc-400">
-        Website pages and text content — About, Amenities, Packages, Tour video and Blog.
+        Website pages and text content — About, Amenities, Packages, Tour video, FAQ and Blog.
       </p>
 
       <div className="flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-charcoal-light/80 p-3">
@@ -109,6 +139,13 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
             the home page tour section updates automatically.
           </p>
           <TextsEditor initial={tourTexts} />
+        </div>
+      ) : null}
+
+      {!error && section === "faq" ? (
+        <div className="space-y-8">
+          <TextsEditor initial={faqTexts} />
+          <FaqEditor initial={faqs} />
         </div>
       ) : null}
 
