@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
+import { toast } from "sonner";
 
 function LoginForm() {
   const router = useRouter();
@@ -23,14 +24,19 @@ function LoginForm() {
       });
       const data = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        setError(data.error || "Login failed");
+        const err = data.error || "Login failed";
+        setError(err);
+        toast.error(err);
         setLoading(false);
         return;
       }
+      toast.success("Welcome back");
       router.replace("/admin");
       router.refresh();
     } catch {
-      setError("Network error");
+      const err = "Network error";
+      setError(err);
+      toast.error(err);
       setLoading(false);
     }
   }

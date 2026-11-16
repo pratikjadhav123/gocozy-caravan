@@ -7,8 +7,10 @@ type GalleryImage = { src: string; alt: string };
 
 export function VehicleGallery({ images }: { images: readonly GalleryImage[] }) {
   const [active, setActive] = useState(0);
-  const main = images[active] ?? images[0];
-  const thumbs = images.slice(0, 5);
+  const list = images.length ? images : [];
+  const main = list[active] ?? list[0];
+
+  if (!main) return null;
 
   return (
     <div className="grid gap-3 lg:grid-cols-[1.4fr_0.6fr]">
@@ -20,10 +22,11 @@ export function VehicleGallery({ images }: { images: readonly GalleryImage[] }) 
           priority
           className="object-cover"
           sizes="(max-width:1024px) 100vw, 60vw"
+          unoptimized={main.src.startsWith("/uploads/")}
         />
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
-        {thumbs.map((img, index) => (
+      <div className="grid max-h-[420px] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-4 lg:grid-cols-2">
+        {list.map((img, index) => (
           <button
             key={`${img.src}-${index}`}
             type="button"
@@ -35,12 +38,19 @@ export function VehicleGallery({ images }: { images: readonly GalleryImage[] }) 
             }`}
             aria-label={`View photo ${index + 1}`}
           >
-            <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="20vw" />
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              className="object-cover"
+              sizes="20vw"
+              unoptimized={img.src.startsWith("/uploads/")}
+            />
           </button>
         ))}
       </div>
       <p className="text-xs text-zinc-500 lg:col-span-2">
-        {images.length} photos · tap thumbnails to preview
+        {list.length} photos · tap thumbnails to preview
       </p>
     </div>
   );

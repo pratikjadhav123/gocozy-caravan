@@ -1,3 +1,4 @@
+import "server-only";
 import mysql, { type Pool, type ResultSetHeader, type RowDataPacket } from "mysql2/promise";
 
 declare global {

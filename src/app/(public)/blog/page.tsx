@@ -1,25 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BLOG_POSTS } from "@/lib/content";
+import { getMediaBySlot } from "@/lib/cms";
+import { getCmsBlogPostsForSite } from "@/lib/cms-content";
 
 export const metadata: Metadata = {
   title: "Blog",
   description: "Trip reports, route guides, and honest advice for caravan travel across India.",
 };
 
-export default function BlogPage() {
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = await getCmsBlogPostsForSite();
+  let blogHero = "/images/fleet/urbania-hills.png";
+  let blogAlt = "Go Cozy on the road";
+  try {
+    const media = await getMediaBySlot("blog_hero");
+    if (media?.file_url) {
+      blogHero = media.file_url;
+      blogAlt = media.alt_text || blogAlt;
+    }
+  } catch {
+    // fallback defaults
+  }
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0">
           <Image
-            src="/images/fleet/urbania-hills.png"
-            alt="Go Cozy on the road"
+            src={blogHero}
+            alt={blogAlt}
             fill
             priority
             className="object-cover object-center"
             sizes="100vw"
+            unoptimized={blogHero.startsWith("/uploads/")}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/88 to-charcoal/55" />
         </div>
@@ -42,7 +59,7 @@ export default function BlogPage() {
 
       <section className="py-14 sm:py-16">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2 sm:px-6">
-          {BLOG_POSTS.map((post) => (
+          {posts.map((post) => (
             <article
               key={post.slug}
               className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
@@ -54,6 +71,7 @@ export default function BlogPage() {
                   fill
                   className="object-cover transition duration-500 hover:scale-105"
                   sizes="(max-width:768px) 100vw, 50vw"
+                  unoptimized={post.image.startsWith("/uploads/")}
                 />
                 <span className="absolute bottom-3 right-3 flex h-14 w-14 flex-col items-center justify-center rounded-full bg-gold text-center text-[10px] font-bold leading-tight text-charcoal">
                   {post.dateLabel.split(" ").slice(0, 2).map((part) => (

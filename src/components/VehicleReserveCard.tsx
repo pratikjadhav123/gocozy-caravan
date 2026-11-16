@@ -1,9 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { SITE, type Vehicle, vehicleCapacityLabel, whatsappUrl } from "@/lib/constants";
+import { SITE, vehicleCapacityLabel, whatsappUrl } from "@/lib/constants";
 
-export function VehicleReserveCard({ vehicle }: { vehicle: Vehicle }) {
+type ReserveVehicle = {
+  id: string;
+  name: string;
+  seats: string;
+  beds?: string | null;
+  highlight: string;
+};
+
+export function VehicleReserveCard({ vehicle }: { vehicle: ReserveVehicle }) {
   const wa = whatsappUrl(
     `Hi ${SITE.name}, I want to check availability for ${vehicle.name} (${vehicleCapacityLabel(vehicle)}).`
   );

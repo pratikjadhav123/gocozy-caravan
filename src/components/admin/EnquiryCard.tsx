@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { buildEnquiryReplyWhatsApp } from "@/lib/enquiry-messages";
 
 type Props = {
@@ -36,13 +37,18 @@ export function EnquiryCard(props: Props) {
 
   async function patchStatus(next: Props["status"]) {
     setBusy(true);
-    await fetch("/api/admin/contacts", {
+    const res = await fetch("/api/admin/contacts", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: props.id, status: next }),
     });
-    setStatus(next);
     setBusy(false);
+    if (!res.ok) {
+      toast.error("Could not update enquiry status");
+      return;
+    }
+    setStatus(next);
+    toast.success(`Enquiry marked ${next}`);
     router.refresh();
   }
 
@@ -63,9 +69,11 @@ export function EnquiryCard(props: Props) {
     try {
       await navigator.clipboard.writeText(props.phone);
       setCopied(true);
+      toast.success("Phone copied");
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
       window.prompt("Copy phone number", props.phone);
+      toast.error("Could not copy phone");
     }
   }
 

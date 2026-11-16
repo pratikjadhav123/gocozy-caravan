@@ -5,25 +5,22 @@ import type { Metadata } from "next";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { VehicleGallery } from "@/components/VehicleGallery";
 import { VehicleReserveCard } from "@/components/VehicleReserveCard";
+import { getCmsVehicleBySlug, getCmsVehiclesForSite } from "@/lib/cms-content";
 import {
   INCLUDED_IN_QUOTE,
   NOT_INCLUDED,
-  VEHICLES,
-  getVehicle,
   vehicleCapacityLabel,
 } from "@/lib/constants";
+
+export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-export function generateStaticParams() {
-  return VEHICLES.map((v) => ({ id: v.id }));
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const vehicle = getVehicle(id);
+  const vehicle = await getCmsVehicleBySlug(id);
   if (!vehicle) return { title: "Vehicle" };
   return {
     title: vehicle.name,
@@ -33,7 +30,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function VehicleDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const vehicle = getVehicle(id);
+  const [vehicle, allVehicles] = await Promise.all([
+    getCmsVehicleBySlug(id),
+    getCmsVehiclesForSite(),
+  ]);
   if (!vehicle) notFound();
 
   return (
@@ -149,21 +149,30 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="font-display text-xl font-bold text-white">More from our fleet</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {VEHICLES.filter((v) => v.id !== vehicle.id).map((v) => (
-              <Link
-                key={v.id}
-                href={`/vehicles/${v.id}`}
-                className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
-              >
-                <div className="relative aspect-[16/10]">
-                  <Image src={v.image} alt={v.name} fill className="object-cover" sizes="33vw" />
-                </div>
-                <div className="p-4">
-                  <p className="font-semibold text-white">{v.name}</p>
-                  <p className="mt-1 text-xs text-zinc-400">{vehicleCapacityLabel(v)}</p>
-                </div>
-              </Link>
-            ))}
+            {allVehicles
+              .filter((v) => v.id !== vehicle.id)
+              .map((v) => (
+                <Link
+                  key={v.id}
+                  href={`/vehicles/${v.id}`}
+                  className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
+                >
+                  <div className="relative aspect-[16/10]">
+                    <Image
+                      src={v.image}
+                      alt={v.name}
+                      fill
+                      className="object-cover"
+                      sizes="33vw"
+                      unoptimized={v.image.startsWith("/uploads/")}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="font-semibold text-white">{v.name}</p>
+                    <p className="mt-1 text-xs text-zinc-400">{vehicleCapacityLabel(v)}</p>
+                  </div>
+                </Link>
+              ))}
           </div>
         </div>
       </section>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   DESTINATIONS,
   SITE,
   VEHICLES,
-  getVehicle,
   vehicleCapacityLabel,
   whatsappUrl,
 } from "@/lib/constants";
@@ -22,9 +22,17 @@ type FormState = {
   message: string;
 };
 
+type BookableVehicle = {
+  id: string;
+  name: string;
+  seats: string;
+  beds?: string | null;
+};
+
 type BookingFormProps = {
   defaultVehicleId?: string;
   defaultDestination?: string;
+  vehicles?: BookableVehicle[];
 };
 
 function digitsOnly(value: string) {
@@ -52,11 +60,24 @@ function openWhatsApp(href: string) {
   anchor.remove();
 }
 
-export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFormProps) {
+export function BookingForm({
+  defaultVehicleId,
+  defaultDestination,
+  vehicles: vehiclesProp,
+}: BookingFormProps) {
+  const fleet: BookableVehicle[] = vehiclesProp?.length
+    ? vehiclesProp
+    : VEHICLES.map((v) => ({ id: v.id, name: v.name, seats: v.seats, beds: v.beds }));
+
+  const findVehicle = (id: string) =>
+    fleet.find((v) => v.id === id) ||
+    (id === "cozy-urbaniya" ? fleet.find((v) => v.id === "cozy-urbania") : undefined);
+
   const resolvedVehicleId = useMemo(() => {
-    if (defaultVehicleId && getVehicle(defaultVehicleId)) return getVehicle(defaultVehicleId)!.id;
-    return VEHICLES[0].id;
-  }, [defaultVehicleId]);
+    if (defaultVehicleId && findVehicle(defaultVehicleId)) return findVehicle(defaultVehicleId)!.id;
+    return fleet[0]?.id || VEHICLES[0].id;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultVehicleId, fleet]);
 
   const resolvedDestination = useMemo(() => {
     if (!defaultDestination) return DESTINATIONS[0];
@@ -122,7 +143,7 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
     if (form.guests && (!/^\d+$/.test(form.guests) || Number(form.guests) < 1)) {
       next.guests = "Enter guest count as a number";
     }
-    if (!form.vehicleId || !getVehicle(form.vehicleId)) next.vehicleId = "Select a vehicle";
+    if (!form.vehicleId || !findVehicle(form.vehicleId)) next.vehicleId = "Select a vehicle";
     if (!form.pickupDate) next.pickupDate = "Pick-up date is required";
     if (!form.returnDate) next.returnDate = "Return date is required";
     if (form.pickupDate && form.returnDate && form.returnDate < form.pickupDate) {
@@ -141,7 +162,7 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
     setSubmitting(true);
     setSubmitError("");
 
-    const vehicle = getVehicle(form.vehicleId) ?? VEHICLES[0];
+    const vehicle = findVehicle(form.vehicleId) ?? fleet[0] ?? VEHICLES[0];
     const phoneDigits = digitsOnly(form.phone);
     const payload = {
       name: form.name.trim(),
@@ -164,7 +185,9 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
       });
       const data = (await res.json()) as { ok: boolean; reference?: string; error?: string };
       if (!res.ok || !data.ok || !data.reference) {
-        setSubmitError(data.error || "Could not create booking. Please try again.");
+        const err = data.error || "Could not create booking. Please try again.";
+        setSubmitError(err);
+        toast.error(err);
         setSubmitting(false);
         return;
       }
@@ -192,10 +215,13 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
       setReference(data.reference);
       setWaHref(href);
       setStatus("success");
+      toast.success("Booking request saved", { description: data.reference });
       openWhatsApp(href);
       setForm(blankForm);
     } catch {
-      setSubmitError("Network error. Check your connection and try again.");
+      const err = "Network error. Check your connection and try again.";
+      setSubmitError(err);
+      toast.error(err);
     } finally {
       setSubmitting(false);
     }
@@ -316,7 +342,7 @@ export function BookingForm({ defaultVehicleId, defaultDestination }: BookingFor
               onChange={(e) => setForm({ ...form, vehicleId: e.target.value })}
               required
             >
-              {VEHICLES.map((v) => (
+              {fleet.map((v) => (
                 <option key={v.id} value={v.id}>
                   {v.name} — {vehicleCapacityLabel(v)}
                 </option>

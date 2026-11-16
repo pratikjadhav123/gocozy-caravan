@@ -50,12 +50,22 @@ Restart `npm run dev`.
 5. Admin enters **price** → clicks **Confirm & send WhatsApp / Email**
 6. Status becomes `confirmed`, customer gets WhatsApp confirmation (email if SMTP set)
 
-### Extra migration (existing DB)
-
-If you already imported `schema.sql` earlier, also run:
+### Extra migrations (existing DB)
 
 ```bash
 node scripts/migrate-confirmations.mjs
+node scripts/migrate-cms.mjs
 ```
 
-Or import `database/migration_confirmations.sql` in phpMyAdmin.
+Or import in phpMyAdmin:
+- `database/migration_confirmations.sql`
+- `database/migration_cms.sql`
+
+### CMS (dynamic images + package text)
+
+Admin:
+- `/admin/media` — upload Home fleet / gallery / blog / packages images
+- `/admin/packages` — edit package prices & section text
+
+Public check API:
+- `GET /api/content`

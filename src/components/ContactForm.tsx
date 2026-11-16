@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { SITE, whatsappUrl } from "@/lib/constants";
 
 function digitsOnly(value: string) {
@@ -63,7 +64,9 @@ export function ContactForm() {
       });
       const data = (await res.json()) as { ok: boolean; reference?: string; error?: string };
       if (!res.ok || !data.ok || !data.reference) {
-        setSubmitError(data.error || "Could not save enquiry");
+        const err = data.error || "Could not save enquiry";
+        setSubmitError(err);
+        toast.error(err);
         setSubmitting(false);
         return;
       }
@@ -85,6 +88,7 @@ export function ContactForm() {
       setReference(data.reference);
       setWaHref(href);
       setStatus("success");
+      toast.success("Enquiry saved", { description: data.reference });
       openWhatsApp(href);
       setName("");
       setPhone("");
@@ -92,7 +96,9 @@ export function ContactForm() {
       setSubject("");
       setMessage("");
     } catch {
-      setSubmitError("Network error. Please try again.");
+      const err = "Network error. Please try again.";
+      setSubmitError(err);
+      toast.error(err);
     } finally {
       setSubmitting(false);
     }

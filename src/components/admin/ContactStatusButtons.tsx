@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function ContactStatusButtons({
   id,
@@ -16,13 +17,18 @@ export function ContactStatusButtons({
 
   async function setStatus(next: typeof status) {
     setBusy(true);
-    await fetch("/api/admin/contacts", {
+    const res = await fetch("/api/admin/contacts", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status: next }),
     });
-    setCurrent(next);
     setBusy(false);
+    if (!res.ok) {
+      toast.error("Could not update enquiry status");
+      return;
+    }
+    setCurrent(next);
+    toast.success(`Enquiry marked ${next}`);
     router.refresh();
   }
 

@@ -23,6 +23,7 @@ export function PageHero({
           priority
           className="object-cover object-center"
           sizes="100vw"
+          unoptimized={image.startsWith("/uploads/")}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/88 to-charcoal/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-charcoal/30" />
