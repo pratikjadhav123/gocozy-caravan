@@ -3,6 +3,7 @@ import Link from "next/link";
 import { HeroSlider } from "@/components/HeroSlider";
 import { OfficeLocation } from "@/components/OfficeLocation";
 import { Reveal } from "@/components/Reveal";
+import { FaqSection } from "@/components/FaqSection";
 import { TourVideo } from "@/components/TourVideo";
 import { TripPackages } from "@/components/TripPackages";
 import { ensureTexts, getMediaMap, getTextsMap, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
@@ -275,6 +276,8 @@ export default async function HomePage() {
       />
 
       <TripPackages />
+
+      <FaqSection />
 
       <OfficeLocation />
 

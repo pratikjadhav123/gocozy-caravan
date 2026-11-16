@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { FaqAccordion } from "@/components/FaqAccordion";
+import { FaqSection } from "@/components/FaqSection";
 import { PICKUP_LOCATIONS, getLocation } from "@/lib/content";
 import { SITE } from "@/lib/constants";
 
@@ -119,7 +119,7 @@ export default async function LocationDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <FaqAccordion title={`FAQs for ${loc.name} pickups`} />
+      <FaqSection title={`FAQs for ${loc.name} pickups`} />
     </>
   );
 }

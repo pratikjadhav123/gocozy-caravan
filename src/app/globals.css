@@ -68,28 +68,40 @@ html {
   height: 0;
 }
 
-/* Admin tables stay usable on small screens */
+/* Admin tables: full width on desktop, scroll on small screens */
+[data-admin] .admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+[data-admin] .admin-table-wrap > table,
 [data-admin] table {
+  width: 100%;
   min-width: 640px;
+  table-layout: auto;
 }
 
 [data-admin] .input-field {
   max-width: 100%;
 }
 
-/* Public footer — rich dark gradient in both themes */
+/* Public footer — premium deep navy + gold wash */
 .site-footer {
   background:
-    linear-gradient(180deg, rgba(11, 18, 24, 0.96), rgba(8, 12, 16, 1)),
-    radial-gradient(circle at 20% 0%, rgba(232, 185, 35, 0.18), transparent 42%),
-    #0b1218;
+    radial-gradient(ellipse 80% 60% at 10% -10%, rgba(232, 185, 35, 0.22), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(14, 116, 144, 0.18), transparent 55%),
+    linear-gradient(165deg, #101820 0%, #0a1016 48%, #070b10 100%);
   color: #a1a1aa;
+  border-top: 1px solid rgb(232 185 35 / 0.18);
 }
 
 [data-public][data-site-theme="light"] .site-footer {
   background:
-    linear-gradient(180deg, #1a2a38 0%, #121c26 55%, #0d141c 100%),
-    radial-gradient(circle at 80% 10%, rgba(208, 137, 47, 0.22), transparent 40%);
+    radial-gradient(ellipse 80% 55% at 15% 0%, rgba(208, 137, 47, 0.28), transparent 48%),
+    radial-gradient(ellipse 60% 45% at 95% 90%, rgba(56, 189, 248, 0.12), transparent 50%),
+    linear-gradient(165deg, #1c2d3c 0%, #13202c 50%, #0c141c 100%);
+  border-top-color: rgb(208 137 47 / 0.28);
 }
 
 [data-public][data-site-theme="light"] .site-footer .text-white,

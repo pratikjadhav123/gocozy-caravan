@@ -1,29 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { FAQS } from "@/lib/constants";
 
 type FaqAccordionProps = {
-  items?: readonly { q: string; a: string }[];
+  items: readonly { q: string; a: string }[];
   title?: string;
+  subtitle?: string;
 };
 
 export function FaqAccordion({
-  items = FAQS,
+  items,
   title = "Frequently asked questions",
+  subtitle = "Straight answers before you book your trip.",
 }: FaqAccordionProps) {
   const [open, setOpen] = useState<number | null>(0);
 
+  if (!items.length) return null;
+
   return (
-    <section className="py-14 sm:py-16">
+    <section className="border-t border-white/10 py-14 sm:py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">{title}</h2>
-        <p className="mt-2 text-zinc-400">Straight answers before you book your trip.</p>
-        <ul className="mt-8 divide-y divide-white/10 rounded-2xl border border-white/10 bg-charcoal-light/60">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">FAQ</p>
+        <h2 className="mt-3 font-display text-2xl font-semibold text-white sm:text-3xl">{title}</h2>
+        {subtitle ? <p className="mt-2 max-w-2xl text-zinc-400">{subtitle}</p> : null}
+        <ul className="mt-8 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light/60 shadow-[0_18px_50px_rgba(0,0,0,0.18)]">
           {items.map((item, index) => {
             const isOpen = open === index;
             return (
-              <li key={item.q}>
+              <li key={`${item.q}-${index}`}>
                 <button
                   type="button"
                   className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-white/5"
