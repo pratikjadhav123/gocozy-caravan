@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import Script from "next/script";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -47,6 +48,7 @@ const siteThemeBootScript = `
     if (location.pathname.indexOf('/admin') === 0) {
       document.documentElement.dataset.siteTheme = 'dark';
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
       document.documentElement.style.colorScheme = 'dark';
       return;
     }
@@ -54,6 +56,7 @@ const siteThemeBootScript = `
     if (t !== 'light' && t !== 'dark') t = 'dark';
     document.documentElement.dataset.siteTheme = t;
     document.documentElement.classList.add(t);
+    document.documentElement.classList.remove(t === 'light' ? 'dark' : 'light');
     document.documentElement.style.colorScheme = t;
   } catch (e) {}
 })();
@@ -70,10 +73,12 @@ export default function RootLayout({
       className={`${dmSans.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: siteThemeBootScript }} />
-      </head>
-      <body className="min-h-dvh font-sans antialiased">{children}</body>
+      <body className="min-h-dvh font-sans antialiased">
+        <Script id="site-theme-boot" strategy="beforeInteractive">
+          {siteThemeBootScript}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

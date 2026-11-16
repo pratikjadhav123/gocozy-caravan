@@ -37,8 +37,8 @@ export default async function HomePage() {
   }
 
   const [media, texts, vehicles, heroSlides, destinations, amenities] = await Promise.all([
-    getMediaMap(),
-    getTextsMap(),
+    getMediaMap().catch(() => ({}) as Awaited<ReturnType<typeof getMediaMap>>),
+    getTextsMap().catch(() => ({}) as Record<string, string>),
     getCmsVehiclesForSite(),
     getHeroSlidesForSite(),
     getHomeDestinations(),
