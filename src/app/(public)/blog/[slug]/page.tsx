@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { ShareButtons } from "@/components/ShareButtons";
 import { getCmsBlogPostBySlug, getCmsBlogPostsForSite } from "@/lib/cms-content";
 
 export const dynamic = "force-dynamic";
@@ -70,7 +71,14 @@ export default async function BlogDetailPage({ params }: PageProps) {
               <p key={para.slice(0, 24)}>{para}</p>
             ))}
           </div>
-          <div className="mt-10 flex flex-wrap gap-3">
+
+          <ShareButtons
+            className="mt-10"
+            title={post.title}
+            path={`/blog/${post.slug}`}
+          />
+
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/book"
               className="rounded-full bg-gold px-6 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light"
