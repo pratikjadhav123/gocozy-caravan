@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 import { getDashboardStats } from "@/lib/bookings";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -10,8 +11,14 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
-export default async function AdminDashboardPage() {
-  const stats = await getDashboardStats();
+type PageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function AdminDashboardPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  const page = Math.max(Number(sp.page || 1) || 1, 1);
+  const stats = await getDashboardStats({ page, pageSize: 8 });
 
   return (
     <div className="space-y-8">
@@ -42,56 +49,69 @@ export default async function AdminDashboardPage() {
             View all →
           </Link>
         </div>
-        <div className="overflow-x-auto rounded-2xl border border-white/10">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-white/5 text-xs uppercase tracking-wide text-zinc-400">
-              <tr>
-                <th className="px-4 py-3">Reference</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Van</th>
-                <th className="px-4 py-3">Pickup</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recent.length === 0 ? (
+        <div className="overflow-hidden rounded-2xl border border-white/10">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-white/5 text-xs uppercase tracking-wide text-zinc-400">
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
-                    No bookings yet — submit one from the website /book page.
-                  </td>
+                  <th className="px-4 py-3">Reference</th>
+                  <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Van</th>
+                  <th className="px-4 py-3">Pickup</th>
+                  <th className="px-4 py-3">Price</th>
+                  <th className="px-4 py-3">Status</th>
                 </tr>
-              ) : (
-                stats.recent.map((b) => (
-                  <tr key={b.id} className="border-t border-white/10">
-                    <td className="px-4 py-3">
-                      <Link href={`/admin/bookings/${b.id}`} className="font-medium text-gold hover:underline">
-                        {b.reference_no}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-white">{b.customer_name}</div>
-                      <div className="text-xs text-zinc-500">{b.phone}</div>
-                    </td>
-                    <td className="px-4 py-3 text-zinc-300">{b.vehicle_name}</td>
-                    <td className="px-4 py-3 text-zinc-300">{b.pickup_date}</td>
-                    <td className="px-4 py-3 text-zinc-300">
-                      {b.quoted_amount
-                        ? new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(Number(b.quoted_amount))
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusPill status={b.status} />
+              </thead>
+              <tbody>
+                {stats.recent.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
+                      No bookings yet — submit one from the website /book page.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  stats.recent.map((b) => (
+                    <tr key={b.id} className="border-t border-white/10">
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/bookings/${b.id}`}
+                          className="font-medium text-gold hover:underline"
+                        >
+                          {b.reference_no}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-white">{b.customer_name}</div>
+                        <div className="text-xs text-zinc-500">{b.phone}</div>
+                      </td>
+                      <td className="px-4 py-3 text-zinc-300">{b.vehicle_name}</td>
+                      <td className="px-4 py-3 text-zinc-300">{b.pickup_date}</td>
+                      <td className="px-4 py-3 text-zinc-300">
+                        {b.quoted_amount
+                          ? new Intl.NumberFormat("en-IN", {
+                              style: "currency",
+                              currency: "INR",
+                              maximumFractionDigits: 0,
+                            }).format(Number(b.quoted_amount))
+                          : "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusPill status={b.status} />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <AdminPagination
+            page={stats.recentPage}
+            totalPages={stats.recentTotalPages}
+            total={stats.recentTotal}
+            pageSize={stats.recentPageSize}
+            hrefForPage={(p) => (p > 1 ? `/admin?page=${p}` : "/admin")}
+          />
         </div>
       </section>
     </div>

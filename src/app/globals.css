@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-:root {
+/* Default + public dark theme */
+:root,
+html[data-site-theme="dark"],
+[data-public][data-site-theme="dark"] {
   color-scheme: dark;
   --background: #121212;
   --foreground: #f4f4f5;
@@ -8,11 +11,70 @@
   --charcoal-light: #252525;
   --gold: #e8b923;
   --gold-light: #f5d056;
+  --muted: #a1a1aa;
+  --border: rgb(255 255 255 / 0.12);
+  --input-bg: rgb(0 0 0 / 0.25);
+  --card-shadow: 0 16px 40px rgb(0 0 0 / 0.4);
+}
+
+/* Public light / white theme — does not affect admin */
+html[data-site-theme="light"]:not(:has([data-admin])),
+[data-public][data-site-theme="light"] {
+  color-scheme: light;
+  --background: #f7f5f1;
+  --foreground: #152433;
+  --charcoal: #ffffff;
+  --charcoal-light: #ebe6dc;
+  --gold: #d0892f;
+  --gold-light: #e4a84a;
+  --muted: #667084;
+  --border: rgb(21 36 51 / 0.12);
+  --input-bg: #ffffff;
+  --card-shadow: 0 16px 40px rgb(21 36 51 / 0.1);
+}
+
+/* Admin CRM — fixed dark palette, independent of public theme */
+[data-admin],
+.admin-theme {
+  color-scheme: dark;
+  --background: #0f0f0f;
+  --foreground: #f4f4f5;
+  --charcoal: #1a1a1a;
+  --charcoal-light: #252525;
+  --gold: #e8b923;
+  --gold-light: #f5d056;
+  --muted: #a1a1aa;
+  --border: rgb(255 255 255 / 0.12);
+  --input-bg: rgb(0 0 0 / 0.25);
+  --card-shadow: 0 16px 40px rgb(0 0 0 / 0.4);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 html {
   overflow-x: clip;
   scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep scroll (admin sidebar) */
+.admin-sidebar-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Admin tables stay usable on small screens */
+[data-admin] table {
+  min-width: 640px;
+}
+
+[data-admin] .input-field {
+  max-width: 100%;
 }
 
 @theme inline {
@@ -22,29 +84,39 @@ html {
   --color-charcoal-light: var(--charcoal-light);
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
-  --font-sans: var(--font-outfit);
-  --font-display: var(--font-outfit);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+  --font-accent: var(--font-display), ui-serif, Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.font-accent {
+  font-family: var(--font-accent), ui-serif, Georgia, serif;
 }
 
 .input-field {
   width: 100%;
   border-radius: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(0 0 0 / 0.25);
+  border: 1px solid var(--border);
+  background: var(--input-bg);
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
-  color: white;
+  color: var(--foreground);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input-field::placeholder {
-  color: rgb(161 161 170);
+  color: var(--muted);
 }
 
 .input-field:focus {
@@ -179,7 +251,7 @@ body {
 .card-hover:hover {
   transform: translateY(-5px);
   border-color: rgb(232 185 35 / 0.4);
-  box-shadow: 0 16px 40px rgb(0 0 0 / 0.4);
+  box-shadow: var(--card-shadow);
 }
 
 @media (hover: none) {
@@ -226,11 +298,105 @@ body {
 }
 
 .stat-chip {
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(0 0 0 / 0.2);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
   border-radius: 1rem;
   padding: 1rem 1.1rem;
   transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+/* Light theme bridges — public site only (never admin) */
+[data-public][data-site-theme="light"] .text-white,
+[data-public][data-site-theme="light"] .text-zinc-50,
+[data-public][data-site-theme="light"] .text-zinc-100,
+[data-public][data-site-theme="light"] .text-zinc-200 {
+  color: #152433;
+}
+
+[data-public][data-site-theme="light"] .text-zinc-300,
+[data-public][data-site-theme="light"] .text-zinc-400 {
+  color: #4b5568;
+}
+
+[data-public][data-site-theme="light"] .text-zinc-500,
+[data-public][data-site-theme="light"] .text-zinc-600 {
+  color: #667084;
+}
+
+[data-public][data-site-theme="light"] .border-white\/10,
+[data-public][data-site-theme="light"] .border-white\/15,
+[data-public][data-site-theme="light"] .border-white\/20,
+[data-public][data-site-theme="light"] .border-white\/25 {
+  border-color: rgb(21 36 51 / 0.12);
+}
+
+[data-public][data-site-theme="light"] .hover\:border-white\/20:hover,
+[data-public][data-site-theme="light"] .hover\:border-white\/25:hover {
+  border-color: rgb(21 36 51 / 0.22);
+}
+
+[data-public][data-site-theme="light"] .hover\:bg-white\/5:hover,
+[data-public][data-site-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: rgb(21 36 51 / 0.05);
+}
+
+[data-public][data-site-theme="light"] .hover\:text-white:hover {
+  color: #152433;
+}
+
+[data-public][data-site-theme="light"] .bg-charcoal\/95 {
+  background-color: rgb(255 255 255 / 0.92);
+}
+
+[data-public][data-site-theme="light"] .bg-charcoal\/50,
+[data-public][data-site-theme="light"] .bg-charcoal\/80 {
+  background-color: rgb(255 255 255 / 0.85);
+}
+
+[data-public][data-site-theme="light"] .bg-zinc-800 {
+  background-color: #e8e2d6;
+}
+
+[data-public][data-site-theme="light"] .text-charcoal {
+  color: #152433;
+}
+
+[data-public][data-site-theme="light"] .bg-gold.text-charcoal,
+[data-public][data-site-theme="light"] a.bg-gold,
+[data-public][data-site-theme="light"] button.bg-gold {
+  color: #152433;
+}
+
+[data-public][data-site-theme="light"] .card-hover:hover {
+  box-shadow: var(--card-shadow);
+}
+
+/* Keep readable white text on photos / dark media blocks in light theme */
+[data-public][data-site-theme="light"] .on-dark .text-white,
+[data-public][data-site-theme="light"] .on-dark .text-zinc-50,
+[data-public][data-site-theme="light"] .on-dark .text-zinc-100,
+[data-public][data-site-theme="light"] .on-dark .text-zinc-200,
+[data-public][data-site-theme="light"] .on-dark .text-zinc-300 {
+  color: #f8fafc !important;
+}
+
+[data-public][data-site-theme="light"] .on-dark .text-zinc-400,
+[data-public][data-site-theme="light"] .on-dark .text-zinc-500 {
+  color: #cbd5e1 !important;
+}
+
+[data-public][data-site-theme="light"] .on-dark .border-white\/20,
+[data-public][data-site-theme="light"] .on-dark .border-white\/25,
+[data-public][data-site-theme="light"] .on-dark .border-white\/30 {
+  border-color: rgb(255 255 255 / 0.28) !important;
+}
+
+[data-public][data-site-theme="light"] header .text-zinc-300 {
+  color: #3d4a5c;
+}
+
+[data-public][data-site-theme="light"] header .hover\:text-white:hover {
+  color: #152433;
 }
 
 .stat-chip:hover,

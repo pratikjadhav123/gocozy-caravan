@@ -17,16 +17,14 @@ export const SITE = {
   instagram: "https://www.instagram.com/gocozycaravan",
 } as const;
 
+/** Public header — Home is logo only (keeps tabs light). */
 export const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/vehicles", label: "Our Fleet" },
+  { href: "/vehicles", label: "Experience" },
+  { href: "/amenities", label: "Amenities" },
   { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },
-  { href: "/locations", label: "Locations" },
-  { href: "/blog", label: "Blog" },
-  { href: "/amenities", label: "Amenities" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/blog", label: "Stories" },
 ] as const;
 
 export const TRIP_PACKAGES = [

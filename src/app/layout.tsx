@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
-import { AppToaster } from "@/components/AppToaster";
+import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -28,12 +34,30 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     shortcut: "/favicon.ico",
   },
 };
+
+/** Public site theme only. Admin uses fixed dark tokens via [data-admin]. */
+const siteThemeBootScript = `
+(function(){
+  try {
+    if (location.pathname.indexOf('/admin') === 0) {
+      document.documentElement.dataset.siteTheme = 'dark';
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+      return;
+    }
+    var t = localStorage.getItem('gocozy-site-theme') || localStorage.getItem('gocozy-theme');
+    if (t !== 'light' && t !== 'dark') t = 'dark';
+    document.documentElement.dataset.siteTheme = t;
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -41,11 +65,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={outfit.variable}>
-      <body className="min-h-dvh bg-background text-foreground antialiased">
-        {children}
-        <AppToaster />
-      </body>
+    <html
+      lang="en"
+      className={`${dmSans.variable} ${cormorant.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: siteThemeBootScript }} />
+      </head>
+      <body className="min-h-dvh font-sans antialiased">{children}</body>
     </html>
   );
 }

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { HeroSlider } from "@/components/HeroSlider";
 import { OfficeLocation } from "@/components/OfficeLocation";
 import { Reveal } from "@/components/Reveal";
+import { TourVideo } from "@/components/TourVideo";
 import { TripPackages } from "@/components/TripPackages";
-import { getMediaMap, getTextsMap } from "@/lib/cms";
+import { ensureTexts, getMediaMap, getTextsMap, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
 import { getCmsVehiclesForSite } from "@/lib/cms-content";
 import {
   getAmenitiesForSite,
@@ -29,6 +30,12 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const wa = whatsappUrl("Hi GoCozyCaravan, I want to check availability for a trip.");
+  try {
+    await ensureTexts([...TOUR_TEXT_DEFAULTS]);
+  } catch {
+    /* tables may be missing in local setups */
+  }
+
   const [media, texts, vehicles, heroSlides, destinations, amenities] = await Promise.all([
     getMediaMap(),
     getTextsMap(),
@@ -50,6 +57,8 @@ export default async function HomePage() {
   const amenitiesTitle = texts.home_amenities_title || "Onboard amenities";
   const amenitiesSubtitle =
     texts.home_amenities_subtitle || "Everything you need for a cozy journey across India.";
+  const tourPoster =
+    media.home_gallery_1?.file_url || "/images/gallery/interior-lounge-1.png";
 
   const gallery = HOME_GALLERY_DEFAULT.map((fallback, i) => {
     const slot = media[`home_gallery_${i + 1}`];
@@ -86,7 +95,9 @@ export default async function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">{fleetTitle}</h2>
+                <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+                  {fleetTitle}
+                </h2>
                 <p className="mt-2 max-w-lg text-zinc-400">{fleetSubtitle}</p>
               </div>
               <Link href="/vehicles" className="text-sm font-semibold text-gold hover:underline">
@@ -142,7 +153,9 @@ export default async function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">{galleryTitle}</h2>
+                <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+                  {galleryTitle}
+                </h2>
                 <p className="mt-2 text-zinc-400">{gallerySubtitle}</p>
               </div>
               <Link href="/vehicles" className="text-sm font-semibold text-gold hover:underline">
@@ -180,7 +193,9 @@ export default async function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">{destTitle}</h2>
+                <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+                  {destTitle}
+                </h2>
                 <p className="mt-2 text-zinc-400">{destSubtitle}</p>
               </div>
               <Link href="/destinations" className="text-sm font-semibold text-gold hover:underline">
@@ -204,8 +219,8 @@ export default async function HomePage() {
                       sizes="(max-width:1024px) 50vw, 25vw"
                       unoptimized={dest.image.startsWith("/uploads/")}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent" />
-                    <p className="absolute bottom-3 left-3 right-3 font-display text-lg font-semibold text-white">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                    <p className="on-dark absolute bottom-3 left-3 right-3 font-display text-lg font-semibold text-white">
                       {dest.name}
                     </p>
                   </div>
@@ -219,7 +234,9 @@ export default async function HomePage() {
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <h2 className="font-display text-3xl font-bold text-white">{amenitiesTitle}</h2>
+            <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+              {amenitiesTitle}
+            </h2>
             <p className="mt-2 text-zinc-400">{amenitiesSubtitle}</p>
           </Reveal>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -243,6 +260,20 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <TourVideo
+        eyebrow={texts.home_tour_eyebrow || "Take a closer look"}
+        title={texts.home_tour_title || "Step inside"}
+        highlight={texts.home_tour_highlight || "your next adventure."}
+        body={
+          texts.home_tour_body ||
+          "See the layout, discover the amenities and get a feel for life on board before you enquire."
+        }
+        cta={texts.home_tour_cta || "Watch the caravan tour"}
+        videoUrl={texts.home_tour_url || ""}
+        badge={texts.home_tour_badge || "Caravan walkthrough"}
+        posterSrc={tourPoster}
+      />
+
       <TripPackages />
 
       <OfficeLocation />
@@ -262,7 +293,9 @@ export default async function HomePage() {
           </Reveal>
           <Reveal delayMs={120}>
             <div>
-              <h2 className="font-display text-3xl font-bold text-white">Ready to plan your trip?</h2>
+              <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+                Ready to plan your trip?
+              </h2>
               <div className="gold-underline mt-4 w-24" />
               <p className="mt-4 text-zinc-400">
                 Share dates and group size — we confirm pricing on WhatsApp. Follow journeys on

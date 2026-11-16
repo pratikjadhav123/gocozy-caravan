@@ -78,9 +78,9 @@ export function HeroSlider({ whatsappHref, slides }: HeroSliderProps) {
         </motion.div>
       ))}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/75 to-charcoal/25 sm:bg-gradient-to-r sm:from-charcoal sm:via-charcoal/80 sm:to-charcoal/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/25 sm:bg-gradient-to-r sm:from-black sm:via-black/75 sm:to-black/25" />
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pb-16 pt-24 sm:gap-7 sm:px-6 sm:py-28 lg:py-32">
+      <div className="on-dark relative mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pb-16 pt-24 sm:gap-7 sm:px-6 sm:py-28 lg:py-32">
         <AnimatePresence mode="wait">
           <motion.p
             key={`eyebrow-${slide.slug}`}
@@ -97,14 +97,18 @@ export function HeroSlider({ whatsappHref, slides }: HeroSliderProps) {
         <AnimatePresence mode="wait">
           <motion.h1
             key={slide.slug + slide.title}
-            className="max-w-2xl font-display text-[2.35rem] font-bold leading-[1.1] text-white sm:text-5xl lg:text-6xl"
+            className="max-w-2xl font-display text-[2.35rem] font-semibold leading-[1.08] text-white sm:text-5xl lg:text-6xl"
             initial={reduce ? false : { opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, y: -12 }}
             transition={{ duration: 0.45, ease }}
           >
             {slide.title}
-            {slide.highlight ? <span className="mt-1 block text-gold">{slide.highlight}</span> : null}
+            {slide.highlight ? (
+              <span className="mt-1 block font-accent text-[0.92em] font-normal italic text-gold">
+                {slide.highlight}
+              </span>
+            ) : null}
           </motion.h1>
         </AnimatePresence>
 

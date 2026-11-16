@@ -38,7 +38,7 @@ export default async function BlogPage() {
             sizes="100vw"
             unoptimized={blogHero.startsWith("/uploads/")}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/88 to-charcoal/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/45" />
         </div>
         <div className="relative mx-auto flex min-h-[240px] max-w-6xl flex-col justify-end px-4 py-14 sm:min-h-[300px] sm:px-6 sm:py-20">
           <nav className="text-sm text-zinc-400">

@@ -33,7 +33,7 @@ export default async function LocationDetailPage({ params }: PageProps) {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${loc.image})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/90 to-charcoal/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/45" />
         <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <nav className="text-sm text-zinc-400">
             <Link href="/" className="hover:text-gold">

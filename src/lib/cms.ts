@@ -200,12 +200,71 @@ export async function listTexts() {
   return queryRows<TextRow[]>(`SELECT * FROM site_texts ORDER BY text_key`);
 }
 
-export async function updateText(textKey: string, content: string) {
-  await queryExec(`UPDATE site_texts SET content = :content WHERE text_key = :text_key`, {
-    text_key: textKey,
-    content,
-  });
+export async function updateText(textKey: string, content: string, label?: string) {
+  await queryExec(
+    `INSERT INTO site_texts (text_key, label, content)
+     VALUES (:text_key, :label, :content)
+     ON DUPLICATE KEY UPDATE content = VALUES(content)`,
+    {
+      text_key: textKey,
+      label: label || textKey,
+      content,
+    }
+  );
 }
+
+/** Seed missing text rows without overwriting edits. */
+export async function ensureTexts(
+  entries: { text_key: string; label: string; content: string }[]
+) {
+  for (const entry of entries) {
+    await queryExec(
+      `INSERT INTO site_texts (text_key, label, content)
+       VALUES (:text_key, :label, :content)
+       ON DUPLICATE KEY UPDATE text_key = text_key`,
+      entry
+    );
+  }
+}
+
+export const TOUR_TEXT_DEFAULTS = [
+  {
+    text_key: "home_tour_eyebrow",
+    label: "Home — Tour eyebrow",
+    content: "Take a closer look",
+  },
+  {
+    text_key: "home_tour_title",
+    label: "Home — Tour title",
+    content: "Step inside",
+  },
+  {
+    text_key: "home_tour_highlight",
+    label: "Home — Tour highlight (script line)",
+    content: "your next adventure.",
+  },
+  {
+    text_key: "home_tour_body",
+    label: "Home — Tour body",
+    content:
+      "See the layout, discover the amenities and get a feel for life on board before you enquire.",
+  },
+  {
+    text_key: "home_tour_cta",
+    label: "Home — Tour CTA label",
+    content: "Watch the caravan tour",
+  },
+  {
+    text_key: "home_tour_url",
+    label: "Home — Tour YouTube / video URL",
+    content: "",
+  },
+  {
+    text_key: "home_tour_badge",
+    label: "Home — Tour video badge",
+    content: "Caravan walkthrough",
+  },
+] as const;
 
 export async function saveUploadedFile(
   file: File,

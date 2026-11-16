@@ -25,11 +25,11 @@ export function PageHero({
           sizes="100vw"
           unoptimized={image.startsWith("/uploads/")}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/88 to-charcoal/55" />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-charcoal/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25" />
       </div>
-      <div className="relative mx-auto flex min-h-[220px] max-w-6xl flex-col justify-end px-4 py-14 sm:min-h-[280px] sm:px-6 sm:py-16">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+      <div className="on-dark relative mx-auto flex min-h-[220px] max-w-6xl flex-col justify-end px-4 py-14 sm:min-h-[280px] sm:px-6 sm:py-16">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
           {title}
         </h1>
         {subtitle ? (

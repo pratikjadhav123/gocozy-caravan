@@ -3,7 +3,7 @@ import { BlogEditor } from "@/components/admin/BlogEditor";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import { PackagesEditor } from "@/components/admin/PackagesEditor";
 import { TextsEditor } from "@/components/admin/TextsEditor";
-import { listMedia, listPackages, listTexts } from "@/lib/cms";
+import { ensureTexts, listMedia, listPackages, listTexts, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
 import { listCmsBlogPosts } from "@/lib/cms-content";
 import { listAmenities } from "@/lib/cms-home";
 import Link from "next/link";
@@ -16,6 +16,7 @@ const SECTIONS = [
   { id: "about", label: "About Us" },
   { id: "amenities", label: "Amenities" },
   { id: "packages", label: "Packages" },
+  { id: "tour", label: "Tour video" },
   { id: "blog", label: "Blog" },
 ] as const;
 
@@ -37,6 +38,9 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
       [texts, amenities] = await Promise.all([listTexts(), listAmenities()]);
     } else if (section === "packages") {
       [texts, packages] = await Promise.all([listTexts(), listPackages()]);
+    } else if (section === "tour") {
+      await ensureTexts([...TOUR_TEXT_DEFAULTS]);
+      texts = await listTexts();
     } else if (section === "blog") {
       posts = await listCmsBlogPosts();
     }
@@ -47,11 +51,12 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
   const aboutTexts = texts.filter((t) => t.text_key.startsWith("about_"));
   const amenityTexts = texts.filter((t) => t.text_key.startsWith("home_amenities_"));
   const packageTexts = texts.filter((t) => t.text_key.startsWith("packages_"));
+  const tourTexts = texts.filter((t) => t.text_key.startsWith("home_tour_"));
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-zinc-400">
-        Website pages and text content — About, Amenities, Packages and Blog.
+        Website pages and text content — About, Amenities, Packages, Tour video and Blog.
       </p>
 
       <div className="flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-charcoal-light/80 p-3">
@@ -94,6 +99,16 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
         <div className="space-y-8">
           <TextsEditor initial={packageTexts} />
           <PackagesEditor initial={packages} />
+        </div>
+      ) : null}
+
+      {!error && section === "tour" ? (
+        <div className="space-y-4">
+          <p className="text-sm text-zinc-400">
+            Paste a YouTube link in <span className="font-mono text-zinc-300">home_tour_url</span> —
+            the home page tour section updates automatically.
+          </p>
+          <TextsEditor initial={tourTexts} />
         </div>
       ) : null}
 
