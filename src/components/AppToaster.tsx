@@ -1,11 +1,14 @@
 "use client";
 
 import { Toaster } from "sonner";
+import { useTheme } from "@/components/ThemeProvider";
 
 export function AppToaster() {
+  const { theme } = useTheme();
+
   return (
     <Toaster
-      theme="dark"
+      theme={theme}
       position="top-right"
       richColors
       closeButton
@@ -13,8 +16,7 @@ export function AppToaster() {
       duration={3500}
       toastOptions={{
         classNames: {
-          toast:
-            "border border-white/10 bg-charcoal-light text-zinc-100 shadow-xl",
+          toast: "border border-white/10 bg-charcoal-light text-foreground shadow-xl",
           title: "text-sm font-semibold",
           description: "text-xs text-zinc-400",
           success: "border-gold/30",

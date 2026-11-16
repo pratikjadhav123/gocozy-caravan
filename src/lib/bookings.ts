@@ -193,16 +193,14 @@ export async function createContact(input: {
   throw new Error("Could not generate unique contact reference");
 }
 
-export async function listBookings(filters?: {
+function buildBookingWhere(filters?: {
   status?: string;
   q?: string;
   from?: string;
   to?: string;
-  limit?: number;
 }) {
   const where: string[] = ["1=1"];
   const params: Record<string, string | number | null> = {};
-  const limit = Math.min(Math.max(Number(filters?.limit ?? 100) || 100, 1), 300);
 
   if (filters?.status && filters.status !== "all") {
     where.push("status = :status");
@@ -223,13 +221,39 @@ export async function listBookings(filters?: {
     params.q = `%${filters.q.trim()}%`;
   }
 
-  return queryRows<BookingRow[]>(
-    `SELECT * FROM bookings
-     WHERE ${where.join(" AND ")}
-     ORDER BY created_at DESC
-     LIMIT ${limit}`,
+  return { whereSql: where.join(" AND "), params };
+}
+
+export async function listBookings(filters?: {
+  status?: string;
+  q?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  const { whereSql, params } = buildBookingWhere(filters);
+  const pageSize = Math.min(Math.max(Number(filters?.pageSize ?? 10) || 10, 1), 100);
+  const page = Math.max(Number(filters?.page ?? 1) || 1, 1);
+
+  const countRows = await queryRows<(RowDataPacket & { total: number })[]>(
+    `SELECT COUNT(*) AS total FROM bookings WHERE ${whereSql}`,
     params
   );
+  const total = Number(countRows[0]?.total || 0);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
+  const safePage = Math.min(page, totalPages);
+  const offset = (safePage - 1) * pageSize;
+
+  const rows = await queryRows<BookingRow[]>(
+    `SELECT * FROM bookings
+     WHERE ${whereSql}
+     ORDER BY created_at DESC
+     LIMIT ${pageSize} OFFSET ${offset}`,
+    params
+  );
+
+  return { rows, total, page: safePage, pageSize, totalPages };
 }
 
 export async function getBookingById(id: number) {
@@ -391,8 +415,11 @@ export async function updateContactStatus(
   );
 }
 
-export async function getDashboardStats() {
-  const [pipeline, today, recent] = await Promise.all([
+export async function getDashboardStats(options?: { page?: number; pageSize?: number }) {
+  const pageSize = Math.min(Math.max(Number(options?.pageSize ?? 8) || 8, 1), 50);
+  const page = Math.max(Number(options?.page ?? 1) || 1, 1);
+
+  const [pipeline, today, totalRows] = await Promise.all([
     queryRows<(RowDataPacket & { status: string; total: number })[]>(
       `SELECT status, COUNT(*) AS total FROM bookings GROUP BY status`
     ),
@@ -400,16 +427,27 @@ export async function getDashboardStats() {
       `SELECT COUNT(*) AS c FROM bookings
        WHERE DATE(created_at) = CURDATE() OR pickup_date = CURDATE()`
     ),
-    queryRows<BookingRow[]>(
-      `SELECT * FROM bookings ORDER BY created_at DESC LIMIT 8`
-    ),
+    queryRows<(RowDataPacket & { total: number })[]>(`SELECT COUNT(*) AS total FROM bookings`),
   ]);
+
+  const recentTotal = Number(totalRows[0]?.total || 0);
+  const totalPages = Math.max(1, Math.ceil(recentTotal / pageSize) || 1);
+  const safePage = Math.min(page, totalPages);
+  const offset = (safePage - 1) * pageSize;
+
+  const recent = await queryRows<BookingRow[]>(
+    `SELECT * FROM bookings ORDER BY created_at DESC LIMIT ${pageSize} OFFSET ${offset}`
+  );
 
   const byStatus = Object.fromEntries(pipeline.map((r) => [r.status, Number(r.total)]));
   return {
     todayCount: Number(today[0]?.c || 0),
     byStatus,
     recent,
+    recentTotal,
+    recentPage: safePage,
+    recentPageSize: pageSize,
+    recentTotalPages: totalPages,
     totalOpen:
       Number(byStatus.new || 0) +
       Number(byStatus.contacted || 0) +

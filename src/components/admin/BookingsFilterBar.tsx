@@ -32,6 +32,7 @@ function buildHref(next: { status?: string; q?: string; from?: string; to?: stri
   if (q.trim()) params.set("q", q.trim());
   if (from) params.set("from", from);
   if (to) params.set("to", to);
+  // Filters always reset to page 1
   const qs = params.toString();
   return qs ? `/admin/bookings?${qs}` : "/admin/bookings";
 }
@@ -93,8 +94,11 @@ export function BookingsFilterBar({ status, q, from, to, resultCount }: Props) {
         })}
       </div>
 
-      <form onSubmit={onSearch} className="grid gap-3 lg:grid-cols-[1fr_auto_auto_auto]">
-        <label className="block">
+      <form
+        onSubmit={onSearch}
+        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto]"
+      >
+        <label className="block sm:col-span-2 lg:col-span-1">
           <span className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-500">
             Search
           </span>
@@ -102,7 +106,7 @@ export function BookingsFilterBar({ status, q, from, to, resultCount }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ref, name, phone, van, destination…"
-            className="input-field"
+            className="input-field w-full"
           />
         </label>
 
@@ -114,7 +118,7 @@ export function BookingsFilterBar({ status, q, from, to, resultCount }: Props) {
             type="date"
             value={pickupFrom}
             onChange={(e) => setPickupFrom(e.target.value)}
-            className="input-field min-w-[10.5rem]"
+            className="input-field w-full min-w-0"
           />
         </label>
 
@@ -126,21 +130,21 @@ export function BookingsFilterBar({ status, q, from, to, resultCount }: Props) {
             type="date"
             value={pickupTo}
             onChange={(e) => setPickupTo(e.target.value)}
-            className="input-field min-w-[10.5rem]"
+            className="input-field w-full min-w-0"
           />
         </label>
 
-        <div className="flex items-end gap-2">
+        <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-1">
           <button
             type="submit"
-            className="rounded-full bg-gold px-5 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light"
+            className="min-h-11 flex-1 rounded-full bg-gold px-5 py-3 text-sm font-bold text-charcoal transition hover:bg-gold-light sm:flex-none"
           >
             Apply
           </button>
           {hasFilters ? (
             <Link
               href="/admin/bookings"
-              className="rounded-full border border-white/15 px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:border-gold hover:text-gold"
+              className="min-h-11 flex-1 rounded-full border border-white/15 px-4 py-3 text-center text-sm font-semibold text-zinc-300 transition hover:border-gold hover:text-gold sm:flex-none"
             >
               Clear
             </Link>

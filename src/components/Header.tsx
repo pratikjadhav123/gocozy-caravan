@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { NAV_LINKS, SITE } from "@/lib/constants";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -32,7 +33,7 @@ export function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.55, ease }}
     >
-      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:h-[4.25rem] sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:gap-4 xl:gap-6">
+      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:h-[4.25rem] sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:gap-5">
         <Link
           href="/"
           className="logo-link relative z-10 flex min-w-0 shrink-0 items-center rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
@@ -56,14 +57,15 @@ export function Header() {
         </Link>
 
         <nav
-          className="hidden items-center justify-center gap-0.5 lg:flex"
+          className="relative hidden items-center justify-center gap-1 lg:flex"
           aria-label="Main navigation"
         >
           {NAV_LINKS.map(({ href, label }, i) => {
-            const active = pathname === href || (href !== "/" && pathname.startsWith(href));
+            const active = pathname === href || pathname.startsWith(href);
             return (
               <motion.div
                 key={href}
+                className="relative"
                 initial={reduce ? false : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.18 + i * 0.04, ease }}
@@ -71,13 +73,20 @@ export function Header() {
                 <Link
                   href={href}
                   prefetch={false}
-                  className={`whitespace-nowrap rounded-full px-2 py-1.5 text-[11px] font-medium transition-colors xl:px-2.5 xl:text-xs 2xl:px-3 2xl:text-sm ${
+                  className={`relative whitespace-nowrap rounded-full px-3 py-2 text-xs font-medium tracking-wide transition-colors xl:px-3.5 xl:text-[13px] ${
                     active
-                      ? "bg-gold/15 text-gold"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                      ? "text-gold"
+                      : "text-zinc-300 hover:text-white"
                   }`}
                 >
                   {label}
+                  {active ? (
+                    <motion.span
+                      layoutId="nav-underline"
+                      className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gold"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  ) : null}
                 </Link>
               </motion.div>
             );
@@ -90,42 +99,40 @@ export function Header() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.45, delay: 0.35, ease }}
         >
-          <a
-            href={SITE.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-white/20 px-3 py-2 text-sm text-zinc-300 transition hover:border-gold hover:text-gold"
-            aria-label="Instagram"
-          >
-            Instagram
-          </a>
+          <ThemeToggle />
           <Link
             href="/book"
-            className="btn-press rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-charcoal transition hover:bg-gold-light"
+            className="on-dark btn-press group inline-flex items-center gap-2 rounded-full bg-[#152433] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gold hover:text-charcoal"
           >
-            Book Now
+            Plan your trip
+            <span className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden>
+              ↗
+            </span>
           </Link>
         </motion.div>
 
-        <button
-          type="button"
-          className="btn-press inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-xl border border-white/15 text-white transition hover:border-gold/50 hover:text-gold lg:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="sr-only">Menu</span>
-          {open ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" />
-            </svg>
-          ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" />
-            </svg>
-          )}
-        </button>
+        <div className="flex items-center justify-self-end gap-2 lg:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="btn-press inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-gold/50 hover:text-gold"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="sr-only">Menu</span>
+            {open ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -142,38 +149,34 @@ export function Header() {
               className="mx-auto flex max-h-[min(70dvh,520px)] max-w-6xl flex-col gap-1 overflow-y-auto px-4 py-4"
               aria-label="Mobile"
             >
-              {NAV_LINKS.map(({ href, label }, index) => (
-                <motion.div
-                  key={href}
-                  initial={reduce ? false : { opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.28, delay: index * 0.04, ease }}
-                >
-                  <Link
-                    href={href}
-                    prefetch={false}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-xl px-3 py-3.5 text-base font-medium text-zinc-200 transition hover:bg-white/5 active:bg-gold/10"
+              {NAV_LINKS.map(({ href, label }, index) => {
+                const active = pathname === href || pathname.startsWith(href);
+                return (
+                  <motion.div
+                    key={href}
+                    initial={reduce ? false : { opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.28, delay: index * 0.04, ease }}
                   >
-                    {label}
-                  </Link>
-                </motion.div>
-              ))}
-              <a
-                href={SITE.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
-                className="rounded-xl px-3 py-3.5 text-base font-medium text-zinc-200 hover:bg-white/5"
-              >
-                Instagram
-              </a>
+                    <Link
+                      href={href}
+                      prefetch={false}
+                      onClick={() => setOpen(false)}
+                      className={`block rounded-xl px-3 py-3.5 text-base font-medium transition hover:bg-white/5 active:bg-gold/10 ${
+                        active ? "text-gold" : "text-zinc-200"
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  </motion.div>
+                );
+              })}
               <Link
                 href="/book"
                 onClick={() => setOpen(false)}
-                className="btn-press mt-2 rounded-full bg-gold py-3.5 text-center font-semibold text-charcoal"
+                className="on-dark btn-press mt-2 rounded-full bg-[#152433] py-3.5 text-center font-semibold text-white"
               >
-                Book your caravan
+                Plan your trip ↗
               </Link>
             </nav>
           </motion.div>
