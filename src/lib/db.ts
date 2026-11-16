@@ -34,17 +34,35 @@ export function getPool(): Pool {
 
 type SqlParams = Record<string, string | number | boolean | null | Date> | Array<string | number | boolean | null | Date>;
 
+function formatDbError(err: unknown): Error {
+  const message = err instanceof Error ? err.message : String(err);
+  if (message.includes("ECONNREFUSED")) {
+    return new Error(
+      "MySQL is not running on 127.0.0.1:3306. Start MySQL/XAMPP, then restart next dev."
+    );
+  }
+  return err instanceof Error ? err : new Error(message);
+}
+
 export async function queryRows<T extends RowDataPacket[]>(
   sql: string,
   params?: SqlParams
 ): Promise<T> {
-  const [rows] = await getPool().execute<T>(sql, params as never);
-  return rows;
+  try {
+    const [rows] = await getPool().execute<T>(sql, params as never);
+    return rows;
+  } catch (err) {
+    throw formatDbError(err);
+  }
 }
 
 export async function queryExec(sql: string, params?: SqlParams): Promise<ResultSetHeader> {
-  const [result] = await getPool().execute<ResultSetHeader>(sql, params as never);
-  return result;
+  try {
+    const [result] = await getPool().execute<ResultSetHeader>(sql, params as never);
+    return result;
+  } catch (err) {
+    throw formatDbError(err);
+  }
 }
 
 export type { RowDataPacket, ResultSetHeader };

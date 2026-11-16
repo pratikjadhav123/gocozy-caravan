@@ -21,16 +21,16 @@ html[data-site-theme="dark"],
 html[data-site-theme="light"]:not(:has([data-admin])),
 [data-public][data-site-theme="light"] {
   color-scheme: light;
-  --background: #f7f5f1;
+  --background: #f4efe6;
   --foreground: #152433;
-  --charcoal: #ffffff;
-  --charcoal-light: #ebe6dc;
-  --gold: #d0892f;
-  --gold-light: #e4a84a;
-  --muted: #667084;
+  --charcoal: #fffdf9;
+  --charcoal-light: #ebe3d4;
+  --gold: #c9842a;
+  --gold-light: #e0a245;
+  --muted: #5c6b7a;
   --border: rgb(21 36 51 / 0.12);
   --input-bg: #ffffff;
-  --card-shadow: 0 16px 40px rgb(21 36 51 / 0.1);
+  --card-shadow: 0 18px 44px rgb(21 36 51 / 0.1);
 }
 
 /* Admin CRM — fixed dark palette, independent of public theme */
@@ -75,6 +75,49 @@ html {
 
 [data-admin] .input-field {
   max-width: 100%;
+}
+
+/* Public footer — rich dark gradient in both themes */
+.site-footer {
+  background:
+    linear-gradient(180deg, rgba(11, 18, 24, 0.96), rgba(8, 12, 16, 1)),
+    radial-gradient(circle at 20% 0%, rgba(232, 185, 35, 0.18), transparent 42%),
+    #0b1218;
+  color: #a1a1aa;
+}
+
+[data-public][data-site-theme="light"] .site-footer {
+  background:
+    linear-gradient(180deg, #1a2a38 0%, #121c26 55%, #0d141c 100%),
+    radial-gradient(circle at 80% 10%, rgba(208, 137, 47, 0.22), transparent 40%);
+}
+
+[data-public][data-site-theme="light"] .site-footer .text-white,
+[data-public][data-site-theme="light"] .site-footer .text-zinc-300,
+[data-public][data-site-theme="light"] .site-footer .text-zinc-400,
+[data-public][data-site-theme="light"] .site-footer .text-zinc-500 {
+  color: inherit;
+}
+
+[data-public][data-site-theme="light"] .site-footer .text-white {
+  color: #f8fafc !important;
+}
+
+[data-public][data-site-theme="light"] .site-footer .text-zinc-300 {
+  color: #d4d4d8 !important;
+}
+
+[data-public][data-site-theme="light"] .site-footer .text-zinc-400 {
+  color: #a1a1aa !important;
+}
+
+[data-public][data-site-theme="light"] .site-footer .text-zinc-500 {
+  color: #71717a !important;
+}
+
+[data-public][data-site-theme="light"] .site-footer .border-white\/10,
+[data-public][data-site-theme="light"] .site-footer .border-white\/15 {
+  border-color: rgb(255 255 255 / 0.12) !important;
 }
 
 @theme inline {
@@ -372,21 +415,31 @@ body {
 }
 
 /* Keep readable white text on photos / dark media blocks in light theme */
+[data-public][data-site-theme="light"] .on-dark.text-white,
 [data-public][data-site-theme="light"] .on-dark .text-white,
+[data-public][data-site-theme="light"] .on-dark.text-zinc-50,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-50,
+[data-public][data-site-theme="light"] .on-dark.text-zinc-100,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-100,
+[data-public][data-site-theme="light"] .on-dark.text-zinc-200,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-200,
+[data-public][data-site-theme="light"] .on-dark.text-zinc-300,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-300 {
   color: #f8fafc !important;
 }
 
+[data-public][data-site-theme="light"] .on-dark.text-zinc-400,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-400,
+[data-public][data-site-theme="light"] .on-dark.text-zinc-500,
 [data-public][data-site-theme="light"] .on-dark .text-zinc-500 {
   color: #cbd5e1 !important;
 }
 
+[data-public][data-site-theme="light"] .on-dark.border-white\/20,
 [data-public][data-site-theme="light"] .on-dark .border-white\/20,
+[data-public][data-site-theme="light"] .on-dark.border-white\/25,
 [data-public][data-site-theme="light"] .on-dark .border-white\/25,
+[data-public][data-site-theme="light"] .on-dark.border-white\/30,
 [data-public][data-site-theme="light"] .on-dark .border-white\/30 {
   border-color: rgb(255 255 255 / 0.28) !important;
 }
@@ -397,6 +450,33 @@ body {
 
 [data-public][data-site-theme="light"] header .hover\:text-white:hover {
   color: #152433;
+}
+
+/* Premium light cards / chips */
+[data-public][data-site-theme="light"] .stat-chip {
+  background: rgb(255 253 249 / 0.9);
+  border-color: rgb(21 36 51 / 0.1);
+  box-shadow: 0 10px 28px rgb(21 36 51 / 0.06);
+}
+
+[data-public][data-site-theme="light"] .card-hover {
+  background: #fffdf9;
+}
+
+[data-public][data-site-theme="light"] .card-hover:hover {
+  border-color: rgb(201 132 42 / 0.35);
+  transform: translateY(-2px);
+}
+
+[data-public][data-site-theme="light"] header {
+  box-shadow: 0 8px 28px rgb(21 36 51 / 0.06);
+}
+
+/* Keep gold CTA labels dark and readable in light mode */
+[data-public][data-site-theme="light"] .bg-gold,
+[data-public][data-site-theme="light"] a.bg-gold,
+[data-public][data-site-theme="light"] button.bg-gold {
+  color: #152433 !important;
 }
 
 .stat-chip:hover,

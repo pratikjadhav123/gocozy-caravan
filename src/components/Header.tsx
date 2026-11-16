@@ -50,7 +50,7 @@ export function Header() {
               alt={`${SITE.name} logo`}
               width={744}
               height={160}
-              className="h-9 w-auto max-w-[min(188px,58vw)] object-contain object-left sm:h-10 sm:max-w-[210px] lg:h-11 lg:max-w-[236px]"
+              className="h-7 w-auto max-w-[min(148px,52vw)] object-contain object-left sm:h-8 sm:max-w-[168px] lg:h-9 lg:max-w-[188px]"
               priority
             />
           </motion.span>
@@ -102,7 +102,7 @@ export function Header() {
           <ThemeToggle />
           <Link
             href="/book"
-            className="on-dark btn-press group inline-flex items-center gap-2 rounded-full bg-[#152433] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gold hover:text-charcoal"
+            className="btn-press group inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-[#152433] shadow-sm transition hover:bg-gold-light"
           >
             Plan your trip
             <span className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden>
@@ -174,7 +174,7 @@ export function Header() {
               <Link
                 href="/book"
                 onClick={() => setOpen(false)}
-                className="on-dark btn-press mt-2 rounded-full bg-[#152433] py-3.5 text-center font-semibold text-white"
+                className="btn-press mt-2 rounded-full bg-gold py-3.5 text-center font-semibold text-[#152433]"
               >
                 Plan your trip ↗
               </Link>
