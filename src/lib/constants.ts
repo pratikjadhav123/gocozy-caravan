@@ -7,19 +7,55 @@ export const SITE = {
   phone: "9145111125",
   phoneDisplay: "+91 91451 11125",
   whatsappNumber: "919145111125",
-  address: "Pune, Maharashtra · Serving all India",
+  addressShort: "Hinjawadi, Pune · Serving all India",
+  address:
+    "Office 103, Gera Imperium Rise, opposite Wipro Circle, Hinjawadi Phase II, Rajiv Gandhi Infotech Park, Hinjawadi, Pune, Maharashtra 411057",
+  mapsQuery:
+    "Office 103, Gera Imperium Rise, opposite Wipro Circle, Hinjawadi Phase II, Pune, Maharashtra 411057",
+  mapsUrl:
+    "https://www.google.com/maps/search/?api=1&query=Gera+Imperium+Rise+Hinjawadi+Phase+II+Pune+411057",
   instagram: "https://www.instagram.com/gocozycaravan",
 } as const;
 
 export const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/vehicles", label: "Our Fleet" },
+  { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },
   { href: "/locations", label: "Locations" },
   { href: "/blog", label: "Blog" },
   { href: "/amenities", label: "Amenities" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+] as const;
+
+export const TRIP_PACKAGES = [
+  {
+    id: "day-trip",
+    option: "Option 01 — Below 400 km per day",
+    title: "1-Day Trip Package",
+    price: "₹13,000",
+    unit: "/ day",
+    description: "A simple package for a day on the road.",
+    includes: ["1 driver and 1 assistant"],
+    excludes: "Tolls, fuel and border tax",
+    cta: "Enquire about this package",
+    waMessage:
+      "Hi GoCozyCaravan, I want the 1-Day Trip Package (below 400 km/day) at ₹13,000/day. Please share availability.",
+  },
+  {
+    id: "km-wise",
+    option: "Option 02 — Above 400 km per day",
+    title: "KM-Wise Charges",
+    price: "₹60",
+    unit: "/ km",
+    description: "For longer routes and extended road journeys.",
+    includes: ["Driver, assistant and fuel included"],
+    excludes: "Toll tax and border tax",
+    cta: "Get a route-based quote",
+    waMessage:
+      "Hi GoCozyCaravan, I need a KM-wise quote (above 400 km/day at ₹60/km). Here is my route and dates:",
+  },
 ] as const;
 
 export const DESTINATIONS = [
@@ -210,7 +246,10 @@ export function getVehicle(id: string): Vehicle | undefined {
   return VEHICLES.find((v) => v.id === id);
 }
 
-export function vehicleCapacityLabel(vehicle: Vehicle): string {
+export function vehicleCapacityLabel(vehicle: {
+  seats: string;
+  beds?: string | null;
+}): string {
   if (vehicle.beds) return `${vehicle.seats} seats · ${vehicle.beds} beds`;
   return `${vehicle.seats} seats`;
 }

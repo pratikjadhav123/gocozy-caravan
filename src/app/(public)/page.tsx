@@ -1,17 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSlider } from "@/components/HeroSlider";
+import { OfficeLocation } from "@/components/OfficeLocation";
 import { Reveal } from "@/components/Reveal";
+import { TripPackages } from "@/components/TripPackages";
+import { getMediaMap, getTextsMap } from "@/lib/cms";
+import { getCmsVehiclesForSite } from "@/lib/cms-content";
 import {
-  AMENITIES,
-  SITE,
-  VEHICLES,
-  vehicleCapacityLabel,
-  whatsappUrl,
-} from "@/lib/constants";
-import { TRAVEL_DESTINATIONS } from "@/lib/content";
+  getAmenitiesForSite,
+  getHeroSlidesForSite,
+  getHomeDestinations,
+} from "@/lib/cms-home";
+import { SITE, vehicleCapacityLabel, whatsappUrl } from "@/lib/constants";
 
-const HOME_GALLERY = [
+const HOME_GALLERY_DEFAULT = [
   { src: "/images/slider/slide-1.png", alt: "Go Cozy motorhome outdoor setup" },
   { src: "/images/slider/slide-2.png", alt: "Go Cozy Karavan front" },
   { src: "/images/slider/slide-3.png", alt: "Go Cozy Caravan side" },
@@ -23,12 +25,42 @@ const HOME_GALLERY = [
   { src: "/images/gallery/family-lounge.png", alt: "Family lounge seating" },
 ] as const;
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
   const wa = whatsappUrl("Hi GoCozyCaravan, I want to check availability for a trip.");
+  const [media, texts, vehicles, heroSlides, destinations, amenities] = await Promise.all([
+    getMediaMap(),
+    getTextsMap(),
+    getCmsVehiclesForSite(),
+    getHeroSlidesForSite(),
+    getHomeDestinations(),
+    getAmenitiesForSite(),
+  ]);
+
+  const fleetTitle = texts.home_fleet_title || "Our fleet";
+  const fleetSubtitle =
+    texts.home_fleet_subtitle || "Two cozy caravans for families and Urbania for larger groups.";
+  const galleryTitle = texts.home_gallery_title || "Fleet moments";
+  const gallerySubtitle =
+    texts.home_gallery_subtitle || "Real Go Cozy vans — day trips, overnight stays & groups.";
+  const destTitle = texts.home_dest_title || "Popular destinations";
+  const destSubtitle =
+    texts.home_dest_subtitle || "Hills, beaches & desert — pick a vibe, then book.";
+  const amenitiesTitle = texts.home_amenities_title || "Onboard amenities";
+  const amenitiesSubtitle =
+    texts.home_amenities_subtitle || "Everything you need for a cozy journey across India.";
+
+  const gallery = HOME_GALLERY_DEFAULT.map((fallback, i) => {
+    const slot = media[`home_gallery_${i + 1}`];
+    return slot?.file_url
+      ? { src: slot.file_url, alt: slot.alt_text || fallback.alt }
+      : { src: fallback.src, alt: fallback.alt };
+  });
 
   return (
     <>
-      <HeroSlider whatsappHref={wa} />
+      <HeroSlider whatsappHref={wa} slides={heroSlides} />
 
       <section className="border-y border-white/10 bg-charcoal-light py-10 sm:py-14">
         <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-3 sm:gap-6 sm:px-6">
@@ -54,10 +86,8 @@ export default function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">Our fleet</h2>
-                <p className="mt-2 max-w-lg text-zinc-400">
-                  Two cozy caravans for families and Urbania for larger groups.
-                </p>
+                <h2 className="font-display text-3xl font-bold text-white">{fleetTitle}</h2>
+                <p className="mt-2 max-w-lg text-zinc-400">{fleetSubtitle}</p>
               </div>
               <Link href="/vehicles" className="text-sm font-semibold text-gold hover:underline">
                 View all vehicles →
@@ -65,39 +95,44 @@ export default function HomePage() {
             </div>
           </Reveal>
           <div className="mt-8 grid gap-5 sm:mt-10 md:grid-cols-3">
-            {VEHICLES.map((vehicle, i) => (
-              <Reveal key={vehicle.id} delayMs={i * 100}>
-                <article className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light">
-                  <Link
-                    href={`/vehicles/${vehicle.id}`}
-                    className="relative block aspect-[4/3] overflow-hidden bg-zinc-800"
-                  >
-                    <Image
-                      src={vehicle.image}
-                      alt={vehicle.name}
-                      fill
-                      className="object-cover transition duration-500 hover:scale-105"
-                      sizes="(max-width:768px) 100vw, 33vw"
-                    />
-                  </Link>
-                  <div className="p-5">
-                    <Link href={`/vehicles/${vehicle.id}`}>
-                      <h3 className="font-display text-lg font-semibold text-white transition hover:text-gold">
-                        {vehicle.name}
-                      </h3>
-                    </Link>
-                    <p className="mt-1 text-sm text-zinc-400">{vehicleCapacityLabel(vehicle)}</p>
-                    <p className="mt-3 text-sm text-zinc-300">{vehicle.highlight}</p>
+            {vehicles.map((vehicle, i) => {
+              const fleetMedia = media[`home_fleet_${vehicle.id}`];
+              const imageSrc = fleetMedia?.file_url || vehicle.image;
+              return (
+                <Reveal key={vehicle.id} delayMs={i * 100}>
+                  <article className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light">
                     <Link
                       href={`/vehicles/${vehicle.id}`}
-                      className="mt-4 inline-block text-sm font-semibold text-gold transition hover:underline"
+                      className="relative block aspect-[4/3] overflow-hidden bg-zinc-800"
                     >
-                      View details & availability →
+                      <Image
+                        src={imageSrc}
+                        alt={fleetMedia?.alt_text || vehicle.name}
+                        fill
+                        className="object-cover transition duration-500 hover:scale-105"
+                        sizes="(max-width:768px) 100vw, 33vw"
+                        unoptimized={imageSrc.startsWith("/uploads/")}
+                      />
                     </Link>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+                    <div className="p-5">
+                      <Link href={`/vehicles/${vehicle.id}`}>
+                        <h3 className="font-display text-lg font-semibold text-white transition hover:text-gold">
+                          {vehicle.name}
+                        </h3>
+                      </Link>
+                      <p className="mt-1 text-sm text-zinc-400">{vehicleCapacityLabel(vehicle)}</p>
+                      <p className="mt-3 text-sm text-zinc-300">{vehicle.highlight}</p>
+                      <Link
+                        href={`/vehicles/${vehicle.id}`}
+                        className="mt-4 inline-block text-sm font-semibold text-gold transition hover:underline"
+                      >
+                        View details & availability →
+                      </Link>
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -107,8 +142,8 @@ export default function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">Fleet moments</h2>
-                <p className="mt-2 text-zinc-400">Real Go Cozy vans — day trips, overnight stays & groups.</p>
+                <h2 className="font-display text-3xl font-bold text-white">{galleryTitle}</h2>
+                <p className="mt-2 text-zinc-400">{gallerySubtitle}</p>
               </div>
               <Link href="/vehicles" className="text-sm font-semibold text-gold hover:underline">
                 See vehicles →
@@ -116,11 +151,13 @@ export default function HomePage() {
             </div>
           </Reveal>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-            {HOME_GALLERY.map((img, i) => (
-              <Reveal key={img.src} delayMs={i * 50}>
+            {gallery.map((img, i) => (
+              <Reveal key={`${img.src}-${i}`} delayMs={i * 50}>
                 <div
                   className={`relative overflow-hidden rounded-2xl border border-white/10 ${
-                    i === 0 || i === 5 ? "aspect-[4/5] sm:aspect-[4/3]" : "aspect-square sm:aspect-[4/3]"
+                    i === 0 || i === 5
+                      ? "aspect-[4/5] sm:aspect-[4/3]"
+                      : "aspect-square sm:aspect-[4/3]"
                   }`}
                 >
                   <Image
@@ -129,6 +166,7 @@ export default function HomePage() {
                     fill
                     className="object-cover transition duration-500 hover:scale-105"
                     sizes="(max-width:640px) 50vw, 25vw"
+                    unoptimized={img.src.startsWith("/uploads/")}
                   />
                 </div>
               </Reveal>
@@ -142,8 +180,8 @@ export default function HomePage() {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-3xl font-bold text-white">Popular destinations</h2>
-                <p className="mt-2 text-zinc-400">Hills, beaches & desert — pick a vibe, then book.</p>
+                <h2 className="font-display text-3xl font-bold text-white">{destTitle}</h2>
+                <p className="mt-2 text-zinc-400">{destSubtitle}</p>
               </div>
               <Link href="/destinations" className="text-sm font-semibold text-gold hover:underline">
                 All destinations →
@@ -151,7 +189,7 @@ export default function HomePage() {
             </div>
           </Reveal>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {TRAVEL_DESTINATIONS.slice(0, 4).map((dest, i) => (
+            {destinations.map((dest, i) => (
               <Reveal key={dest.slug} delayMs={i * 80}>
                 <Link
                   href="/destinations"
@@ -164,6 +202,7 @@ export default function HomePage() {
                       fill
                       className="object-cover transition duration-500 group-hover:scale-105"
                       sizes="(max-width:1024px) 50vw, 25vw"
+                      unoptimized={dest.image.startsWith("/uploads/")}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent" />
                     <p className="absolute bottom-3 left-3 right-3 font-display text-lg font-semibold text-white">
@@ -180,11 +219,11 @@ export default function HomePage() {
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <h2 className="font-display text-3xl font-bold text-white">Onboard amenities</h2>
-            <p className="mt-2 text-zinc-400">Everything you need for a cozy journey across India.</p>
+            <h2 className="font-display text-3xl font-bold text-white">{amenitiesTitle}</h2>
+            <p className="mt-2 text-zinc-400">{amenitiesSubtitle}</p>
           </Reveal>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {AMENITIES.map((a, i) => (
+            {amenities.map((a, i) => (
               <Reveal key={a.title} delayMs={i * 60}>
                 <li className="card-hover rounded-xl border border-white/10 bg-charcoal-light p-5">
                   <h3 className="font-semibold text-gold">{a.title}</h3>
@@ -203,6 +242,10 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      <TripPackages />
+
+      <OfficeLocation />
 
       <section className="border-t border-white/10 pb-16 pt-4 sm:py-20">
         <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 sm:gap-10 sm:px-6 lg:grid-cols-2">
@@ -228,6 +271,7 @@ export default function HomePage() {
               <ul className="mt-6 space-y-2 text-sm text-zinc-300">
                 <li>Phone: {SITE.phoneDisplay}</li>
                 <li>Email: {SITE.email}</li>
+                <li>Office: {SITE.address}</li>
                 <li>
                   <a
                     href={SITE.instagram}
@@ -247,10 +291,10 @@ export default function HomePage() {
                   Book a slot
                 </Link>
                 <Link
-                  href="/locations"
+                  href="/packages"
                   className="btn-press inline-flex items-center justify-center rounded-full border border-white/25 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
                 >
-                  Pickup locations
+                  View packages
                 </Link>
               </div>
             </div>

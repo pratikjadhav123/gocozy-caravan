@@ -1,11 +1,13 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
-import { AMENITIES } from "@/lib/constants";
+import { getAmenitiesForSite } from "@/lib/cms-home";
 
 export const metadata: Metadata = {
   title: "Amenities",
 };
+
+export const dynamic = "force-dynamic";
 
 const gallery = [
   { src: "/images/gallery/interior-lounge-1.png", alt: "Lounge seating with LED ceiling" },
@@ -16,7 +18,9 @@ const gallery = [
   { src: "/images/gallery/interior-kitchen.png", alt: "Bathroom washbasin and fittings" },
 ];
 
-export default function AmenitiesPage() {
+export default async function AmenitiesPage() {
+  const amenities = await getAmenitiesForSite();
+
   return (
     <>
       <PageHero
@@ -28,7 +32,7 @@ export default function AmenitiesPage() {
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {AMENITIES.map((item) => (
+            {amenities.map((item) => (
               <article
                 key={item.title}
                 className="rounded-2xl border border-white/10 bg-charcoal-light p-6"

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { BookingForm } from "@/components/BookingForm";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { PageHero } from "@/components/PageHero";
-import { SITE, getVehicle } from "@/lib/constants";
+import { getCmsVehicleBySlug, getCmsVehiclesForSite } from "@/lib/cms-content";
+import { SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Book Now",
 };
+
+export const dynamic = "force-dynamic";
 
 type BookPageProps = {
   searchParams: Promise<{ vehicle?: string; destination?: string }>;
@@ -14,7 +17,8 @@ type BookPageProps = {
 
 export default async function BookPage({ searchParams }: BookPageProps) {
   const { vehicle: vehicleId, destination } = await searchParams;
-  const selected = vehicleId ? getVehicle(vehicleId) : undefined;
+  const vehicles = await getCmsVehiclesForSite();
+  const selected = vehicleId ? await getCmsVehicleBySlug(vehicleId) : undefined;
 
   return (
     <>
@@ -55,6 +59,7 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             <BookingForm
               defaultVehicleId={selected?.id}
               defaultDestination={destination}
+              vehicles={vehicles}
             />
           </div>
         </div>

@@ -3,13 +3,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { PageHero } from "@/components/PageHero";
-import { VEHICLES, vehicleCapacityLabel } from "@/lib/constants";
+import { getCmsVehiclesForSite } from "@/lib/cms-content";
+import { vehicleCapacityLabel } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Our Fleet",
 };
 
-export default function VehiclesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function VehiclesPage() {
+  const vehicles = await getCmsVehiclesForSite();
+
   return (
     <>
       <PageHero
@@ -20,7 +25,7 @@ export default function VehiclesPage() {
       />
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">
-          {VEHICLES.map((vehicle, index) => (
+          {vehicles.map((vehicle, index) => (
             <article
               key={vehicle.id}
               className={`grid gap-8 lg:grid-cols-2 lg:items-center ${
@@ -37,6 +42,7 @@ export default function VehiclesPage() {
                   fill
                   className="object-cover transition duration-700 hover:scale-105"
                   sizes="(max-width:1024px) 100vw, 50vw"
+                  unoptimized={vehicle.image.startsWith("/uploads/")}
                 />
               </Link>
               <div className="animate-fade-up">

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { BookingStatus } from "@/lib/bookings";
 
 type Props = {
@@ -55,13 +56,9 @@ export function BookingStatusForm({
   const [amount, setAmount] = useState(quotedAmount || "");
   const [saving, setSaving] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   async function save() {
     setSaving(true);
-    setError("");
-    setMessage("");
     const res = await fetch(`/api/admin/bookings/${bookingId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -73,23 +70,21 @@ export function BookingStatusForm({
     });
     setSaving(false);
     if (!res.ok) {
-      setError("Save failed");
+      toast.error("Could not save booking");
       return;
     }
-    setMessage("Saved");
+    toast.success("Booking updated");
     router.refresh();
   }
 
   async function confirmBooking() {
     const price = Number(amount);
     if (!Number.isFinite(price) || price <= 0) {
-      setError("Enter price (INR) first, then confirm");
+      toast.error("Enter price (INR) first, then confirm");
       return;
     }
 
     setConfirming(true);
-    setError("");
-    setMessage("");
 
     try {
       const res = await fetch(`/api/admin/bookings/${bookingId}/confirm`, {
@@ -110,7 +105,7 @@ export function BookingStatusForm({
       };
 
       if (!res.ok || !data.ok) {
-        setError(data.error || "Confirm failed");
+        toast.error(data.error || "Confirm failed");
         setConfirming(false);
         return;
       }
@@ -126,10 +121,10 @@ export function BookingStatusForm({
             ? "WhatsApp opened. Add SMTP in .env.local to auto-send email."
             : "WhatsApp confirmation opened.";
 
-      setMessage(`Booking confirmed. ${emailNote}`);
+      toast.success("Booking confirmed", { description: emailNote });
       router.refresh();
     } catch {
-      setError("Network error while confirming");
+      toast.error("Network error while confirming");
     } finally {
       setConfirming(false);
     }
@@ -229,9 +224,6 @@ export function BookingStatusForm({
           </button>
         </div>
       </div>
-
-      {error ? <p className="text-sm text-red-400">{error}</p> : null}
-      {message ? <p className="text-sm text-gold">{message}</p> : null}
 
       <a
         href={`https://wa.me/91${phone.replace(/\D/g, "")}`}

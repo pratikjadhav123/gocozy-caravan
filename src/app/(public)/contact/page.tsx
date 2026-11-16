@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
+import { OfficeLocation } from "@/components/OfficeLocation";
 import { PageHero } from "@/components/PageHero";
 import { SITE, whatsappUrl } from "@/lib/constants";
 
@@ -36,7 +37,12 @@ export default function ContactPage() {
               <ul className="mt-4 space-y-3 text-sm text-zinc-300">
                 <li>
                   <span className="block text-xs uppercase text-zinc-500">WhatsApp</span>
-                  <a href={wa} className="font-medium text-gold hover:underline" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={wa}
+                    className="font-medium text-gold hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {SITE.phoneDisplay}
                   </a>
                 </li>
@@ -58,10 +64,18 @@ export default function ContactPage() {
                   </a>
                 </li>
                 <li>
-                  <span className="block text-xs uppercase text-zinc-500">Location</span>
-                  {SITE.address}
+                  <span className="block text-xs uppercase text-zinc-500">Office</span>
+                  <span className="mt-1 block leading-relaxed">{SITE.address}</span>
                 </li>
               </ul>
+              <a
+                href={SITE.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-block text-sm font-semibold text-gold hover:underline"
+              >
+                Open Google Maps →
+              </a>
             </div>
             <p className="text-sm text-zinc-500">
               Fill the form to open WhatsApp with your message — same-day replies on WhatsApp.
@@ -72,6 +86,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <OfficeLocation />
     </>
   );
 }

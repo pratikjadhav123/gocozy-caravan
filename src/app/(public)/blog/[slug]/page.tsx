@@ -2,27 +2,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { BLOG_POSTS, getBlogPost } from "@/lib/content";
+import { getCmsBlogPostBySlug, getCmsBlogPostsForSite } from "@/lib/cms-content";
+
+export const dynamic = "force-dynamic";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }));
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getCmsBlogPostBySlug(slug);
   if (!post) return { title: "Blog" };
   return { title: post.title, description: post.excerpt };
 }
 
 export default async function BlogDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const [post, allPosts] = await Promise.all([
+    getCmsBlogPostBySlug(slug),
+    getCmsBlogPostsForSite(),
+  ]);
   if (!post) notFound();
 
-  const related = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
+  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   return (
     <>
@@ -61,6 +62,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
               className="object-cover"
               priority
               sizes="(max-width:768px) 100vw, 768px"
+              unoptimized={post.image.startsWith("/uploads/")}
             />
           </div>
           <div className="mt-8 space-y-5 text-base leading-relaxed text-zinc-300">
@@ -97,7 +99,14 @@ export default async function BlogDetailPage({ params }: PageProps) {
                   className="card-hover overflow-hidden rounded-2xl border border-white/10 bg-charcoal-light"
                 >
                   <div className="relative aspect-[16/10]">
-                    <Image src={item.image} alt={item.title} fill className="object-cover" sizes="50vw" />
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="50vw"
+                      unoptimized={item.image.startsWith("/uploads/")}
+                    />
                   </div>
                   <div className="p-5">
                     <p className="text-xs uppercase tracking-wider text-gold">{item.category}</p>

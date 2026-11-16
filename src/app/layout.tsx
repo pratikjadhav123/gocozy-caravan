@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
+import { AppToaster } from "@/components/AppToaster";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -41,7 +42,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={outfit.variable}>
-      <body className="min-h-dvh bg-background text-foreground antialiased">{children}</body>
+      <body className="min-h-dvh bg-background text-foreground antialiased">
+        {children}
+        <AppToaster />
+      </body>
     </html>
   );
 }

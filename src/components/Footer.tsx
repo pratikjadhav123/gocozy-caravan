@@ -18,43 +18,49 @@ export function Footer() {
             className="h-10 w-auto max-w-[220px] object-contain object-left sm:h-11 sm:max-w-[250px]"
           />
           <p className="mt-4 text-sm leading-relaxed">{SITE.description}</p>
+          <p className="mt-4 text-sm leading-relaxed text-zinc-500">{SITE.address}</p>
         </div>
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-zinc-300">Explore</p>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link href="/vehicles" className="transition hover:text-gold">
+              <Link href="/vehicles" prefetch={false} className="transition hover:text-gold">
                 Our Fleet
               </Link>
             </li>
             <li>
-              <Link href="/destinations" className="transition hover:text-gold">
+              <Link href="/destinations" prefetch={false} className="transition hover:text-gold">
                 Destinations
               </Link>
             </li>
             <li>
-              <Link href="/locations" className="transition hover:text-gold">
+              <Link href="/locations" prefetch={false} className="transition hover:text-gold">
                 Locations
               </Link>
             </li>
             <li>
-              <Link href="/blog" className="transition hover:text-gold">
+              <Link href="/blog" prefetch={false} className="transition hover:text-gold">
                 Blog
               </Link>
             </li>
             <li>
-              <Link href="/book" className="transition hover:text-gold">
+              <Link href="/packages" prefetch={false} className="transition hover:text-gold">
+                Packages
+              </Link>
+            </li>
+            <li>
+              <Link href="/book" prefetch={false} className="transition hover:text-gold">
                 Book Now
               </Link>
             </li>
             <li>
-              <Link href="/about" className="transition hover:text-gold">
+              <Link href="/about" prefetch={false} className="transition hover:text-gold">
                 About
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="transition hover:text-gold">
+              <Link href="/contact" prefetch={false} className="transition hover:text-gold">
                 Contact
               </Link>
             </li>
@@ -68,7 +74,7 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm">
             {TRAVEL_DESTINATIONS.slice(0, 6).map((d) => (
               <li key={d.slug}>
-                <Link href="/destinations" className="transition hover:text-gold">
+                <Link href="/destinations" prefetch={false} className="transition hover:text-gold">
                   {d.name}
                 </Link>
               </li>

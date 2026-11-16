@@ -70,6 +70,7 @@ export function Header() {
               >
                 <Link
                   href={href}
+                  prefetch={false}
                   className={`whitespace-nowrap rounded-full px-2 py-1.5 text-[11px] font-medium transition-colors xl:px-2.5 xl:text-xs 2xl:px-3 2xl:text-sm ${
                     active
                       ? "bg-gold/15 text-gold"
@@ -150,6 +151,7 @@ export function Header() {
                 >
                   <Link
                     href={href}
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className="block rounded-xl px-3 py-3.5 text-base font-medium text-zinc-200 transition hover:bg-white/5 active:bg-gold/10"
                   >

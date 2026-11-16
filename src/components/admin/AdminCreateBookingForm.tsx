@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { toast } from "sonner";
 import { DESTINATIONS, VEHICLES, vehicleCapacityLabel } from "@/lib/constants";
 
 type Props = {
@@ -30,13 +31,11 @@ export function AdminCreateBookingForm({
   const [destination, setDestination] = useState<string>(DESTINATIONS[0]);
   const [message, setMessage] = useState(defaultMessage);
   const [quotedAmount, setQuotedAmount] = useState("");
-  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setError("");
 
     const res = await fetch("/api/admin/bookings", {
       method: "POST",
@@ -65,10 +64,13 @@ export function AdminCreateBookingForm({
     setSaving(false);
 
     if (!res.ok || !data.ok || !data.bookingId) {
-      setError(data.error || "Could not create booking");
+      toast.error(data.error || "Could not create booking");
       return;
     }
 
+    toast.success("Booking created", {
+      description: data.reference || `Booking #${data.bookingId}`,
+    });
     router.push(`/admin/bookings/${data.bookingId}`);
     router.refresh();
   }
@@ -174,8 +176,6 @@ export function AdminCreateBookingForm({
           placeholder="Pickup point, discussion notes…"
         />
       </Field>
-
-      {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
       <button
         type="submit"
