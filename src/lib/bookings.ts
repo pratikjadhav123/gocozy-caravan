@@ -256,6 +256,27 @@ export async function listBookings(filters?: {
   return { rows, total, page: safePage, pageSize, totalPages };
 }
 
+/** Bookings that overlap a date range (for fleet calendar). */
+export async function listBookingsOverlapping(input: {
+  from: string;
+  to: string;
+  statuses?: BookingStatus[];
+}) {
+  const statuses = input.statuses?.length
+    ? input.statuses
+    : (["confirmed", "in_progress"] as BookingStatus[]);
+  const statusList = statuses.map((s) => `'${s}'`).join(", ");
+
+  return queryRows<BookingRow[]>(
+    `SELECT * FROM bookings
+     WHERE status IN (${statusList})
+       AND pickup_date <= :to
+       AND return_date >= :from
+     ORDER BY pickup_date ASC, id ASC`,
+    { from: input.from, to: input.to }
+  );
+}
+
 export async function getBookingById(id: number) {
   const rows = await queryRows<BookingRow[]>(`SELECT * FROM bookings WHERE id = :id LIMIT 1`, {
     id,

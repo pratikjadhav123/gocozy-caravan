@@ -83,12 +83,20 @@ export default async function AdminBookingsPage({ searchParams }: PageProps) {
         <p className="text-sm text-zinc-400">
           Filter by status, search, or pickup dates — then open a booking to confirm.
         </p>
-        <Link
-          href="/admin/bookings/new"
-          className="rounded-full bg-gold px-4 py-2 text-xs font-bold text-charcoal hover:bg-gold-light"
-        >
-          + New booking
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/bookings/calendar"
+            className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-zinc-300 hover:border-gold/40 hover:text-gold"
+          >
+            Calendar
+          </Link>
+          <Link
+            href="/admin/bookings/new"
+            className="rounded-full bg-gold px-4 py-2 text-xs font-bold text-charcoal hover:bg-gold-light"
+          >
+            + New booking
+          </Link>
+        </div>
       </div>
 
       <BookingsFilterBar status={status} q={q} from={from} to={to} resultCount={total} />

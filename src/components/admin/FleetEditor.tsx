@@ -18,6 +18,8 @@ type VehicleItem = {
   about: string | null;
   gallery_json: string | null;
   features_json: string | null;
+  included_json: string | null;
+  excluded_json: string | null;
   is_active: number;
 };
 
@@ -29,6 +31,17 @@ function featuresToText(raw: string | null) {
     const arr = JSON.parse(raw) as { title: string; description: string }[];
     if (!Array.isArray(arr)) return "";
     return arr.map((f) => `${f.title}: ${f.description}`).join("\n");
+  } catch {
+    return "";
+  }
+}
+
+function listToText(raw: string | null) {
+  if (!raw) return "";
+  try {
+    const arr = JSON.parse(raw) as string[];
+    if (!Array.isArray(arr)) return "";
+    return arr.map(String).join("\n");
   } catch {
     return "";
   }
@@ -209,6 +222,25 @@ export function FleetEditor({ initial }: { initial: VehicleItem[] }) {
             defaultValue={featuresToText(editing?.features_json || null)}
           />
         </Field>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field label="Included in quote (one per line)">
+            <textarea
+              name="included"
+              className="input-field min-h-28 resize-y"
+              placeholder="Professional chauffeur (on request)"
+              defaultValue={listToText(editing?.included_json || null)}
+            />
+          </Field>
+          <Field label="Not included (one per line)">
+            <textarea
+              name="excluded"
+              className="input-field min-h-28 resize-y"
+              placeholder="Toll taxes & state entry permits"
+              defaultValue={listToText(editing?.excluded_json || null)}
+            />
+          </Field>
+        </div>
 
         <div className="space-y-3 rounded-2xl border border-white/10 bg-charcoal/40 p-4">
           <p className="text-sm font-semibold text-white">Cover image</p>

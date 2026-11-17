@@ -2,9 +2,15 @@ import { AmenitiesEditor } from "@/components/admin/AmenitiesEditor";
 import { BlogEditor } from "@/components/admin/BlogEditor";
 import { FaqEditor } from "@/components/admin/FaqEditor";
 import { MediaUploader } from "@/components/admin/MediaUploader";
-import { PackagesEditor } from "@/components/admin/PackagesEditor";
 import { TextsEditor } from "@/components/admin/TextsEditor";
-import { ensureTexts, listMedia, listPackages, listTexts, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
+import {
+  ensureMediaSlot,
+  ensureTexts,
+  HOME_CTA_TEXT_DEFAULTS,
+  listMedia,
+  listTexts,
+  TOUR_TEXT_DEFAULTS,
+} from "@/lib/cms";
 import { listCmsBlogPosts } from "@/lib/cms-content";
 import { listFaqs } from "@/lib/cms-faq";
 import { listAmenities } from "@/lib/cms-home";
@@ -17,8 +23,8 @@ type PageProps = {
 const SECTIONS = [
   { id: "about", label: "About Us" },
   { id: "amenities", label: "Amenities" },
-  { id: "packages", label: "Packages" },
   { id: "tour", label: "Tour video" },
+  { id: "cta", label: "Plan trip CTA" },
   { id: "faq", label: "FAQ" },
   { id: "blog", label: "Blog" },
 ] as const;
@@ -31,7 +37,6 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
   let texts: Awaited<ReturnType<typeof listTexts>> = [];
   let media: Awaited<ReturnType<typeof listMedia>> = [];
   let amenities: Awaited<ReturnType<typeof listAmenities>> = [];
-  let packages: Awaited<ReturnType<typeof listPackages>> = [];
   let posts: Awaited<ReturnType<typeof listCmsBlogPosts>> = [];
   let faqs: Awaited<ReturnType<typeof listFaqs>> = [];
 
@@ -40,11 +45,19 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
       [texts, media] = await Promise.all([listTexts(), listMedia("about")]);
     } else if (section === "amenities") {
       [texts, amenities] = await Promise.all([listTexts(), listAmenities()]);
-    } else if (section === "packages") {
-      [texts, packages] = await Promise.all([listTexts(), listPackages()]);
     } else if (section === "tour") {
       await ensureTexts([...TOUR_TEXT_DEFAULTS]);
       texts = await listTexts();
+    } else if (section === "cta") {
+      await ensureTexts([...HOME_CTA_TEXT_DEFAULTS]);
+      await ensureMediaSlot({
+        slot_key: "home_cta_image",
+        label: "Home CTA — Side image",
+        section: "home_cta",
+        file_url: "/images/gallery/interior-lounge-2.png",
+        alt_text: "Luxury caravan interior with seating and lighting",
+      });
+      [texts, media] = await Promise.all([listTexts(), listMedia("home_cta")]);
     } else if (section === "faq") {
       await ensureTexts([
         {
@@ -77,8 +90,8 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
 
   const aboutTexts = texts.filter((t) => t.text_key.startsWith("about_"));
   const amenityTexts = texts.filter((t) => t.text_key.startsWith("home_amenities_"));
-  const packageTexts = texts.filter((t) => t.text_key.startsWith("packages_"));
   const tourTexts = texts.filter((t) => t.text_key.startsWith("home_tour_"));
+  const ctaTexts = texts.filter((t) => t.text_key.startsWith("home_cta_"));
   const faqTexts = texts.filter(
     (t) => t.text_key.startsWith("faq_") || t.text_key === "footer_blurb"
   );
@@ -86,7 +99,7 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
   return (
     <div className="space-y-6">
       <p className="text-sm text-zinc-400">
-        Website pages and text content — About, Amenities, Packages, Tour video, FAQ and Blog.
+        Website pages and text content — About, Amenities, Tour video, Plan trip CTA, FAQ and Blog.
       </p>
 
       <div className="flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-charcoal-light/80 p-3">
@@ -125,13 +138,6 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
         </div>
       ) : null}
 
-      {!error && section === "packages" ? (
-        <div className="space-y-8">
-          <TextsEditor initial={packageTexts} />
-          <PackagesEditor initial={packages} />
-        </div>
-      ) : null}
-
       {!error && section === "tour" ? (
         <div className="space-y-4">
           <p className="text-sm text-zinc-400">
@@ -139,6 +145,17 @@ export default async function PagesContentAdminPage({ searchParams }: PageProps)
             the home page tour section updates automatically.
           </p>
           <TextsEditor initial={tourTexts} />
+        </div>
+      ) : null}
+
+      {!error && section === "cta" ? (
+        <div className="space-y-8">
+          <p className="text-sm text-zinc-400">
+            Edit the home “Ready to plan your trip?” block — title, contact details, buttons and
+            side image.
+          </p>
+          <TextsEditor initial={ctaTexts} />
+          <MediaUploader items={media} />
         </div>
       ) : null}
 

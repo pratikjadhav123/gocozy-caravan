@@ -21,39 +21,10 @@ export const SITE = {
 export const NAV_LINKS = [
   { href: "/vehicles", label: "Our Fleet" },
   { href: "/amenities", label: "Amenities" },
-  { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Stories" },
-] as const;
-
-export const TRIP_PACKAGES = [
-  {
-    id: "day-trip",
-    option: "Option 01 — Below 400 km per day",
-    title: "1-Day Trip Package",
-    price: "₹13,000",
-    unit: "/ day",
-    description: "A simple package for a day on the road.",
-    includes: ["1 driver and 1 assistant"],
-    excludes: "Tolls, fuel and border tax",
-    cta: "Enquire about this package",
-    waMessage:
-      "Hi GoCozyCaravan, I want the 1-Day Trip Package (below 400 km/day) at ₹13,000/day. Please share availability.",
-  },
-  {
-    id: "km-wise",
-    option: "Option 02 — Above 400 km per day",
-    title: "KM-Wise Charges",
-    price: "₹60",
-    unit: "/ km",
-    description: "For longer routes and extended road journeys.",
-    includes: ["Driver, assistant and fuel included"],
-    excludes: "Toll tax and border tax",
-    cta: "Get a route-based quote",
-    waMessage:
-      "Hi GoCozyCaravan, I need a KM-wise quote (above 400 km/day at ₹60/km). Here is my route and dates:",
-  },
+  { href: "/contact", label: "Contact Us" },
 ] as const;
 
 export const DESTINATIONS = [
@@ -242,6 +213,39 @@ export type Vehicle = (typeof VEHICLES)[number];
 export function getVehicle(id: string): Vehicle | undefined {
   if (id === "cozy-urbaniya") return VEHICLES.find((v) => v.id === "cozy-urbania");
   return VEHICLES.find((v) => v.id === id);
+}
+
+/** Admin calendar fleet lanes — T1 / T2 / T3. */
+export const FLEET_UNITS = [
+  {
+    code: "T1",
+    vehicleId: "cozy-caravan-1",
+    label: "Go Cozy Caravan",
+    color: "bg-gold text-charcoal",
+    bar: "bg-gold/90 border-gold text-charcoal",
+    chip: "bg-gold/20 text-gold border-gold/40",
+  },
+  {
+    code: "T2",
+    vehicleId: "cozy-caravan-2",
+    label: "Go Cozy Caravan Kitchen",
+    color: "bg-sky-400 text-charcoal",
+    bar: "bg-sky-400/90 border-sky-300 text-charcoal",
+    chip: "bg-sky-400/20 text-sky-300 border-sky-400/40",
+  },
+  {
+    code: "T3",
+    vehicleId: "cozy-urbania",
+    label: "Go Cozy Urbania",
+    color: "bg-emerald-400 text-charcoal",
+    bar: "bg-emerald-400/90 border-emerald-300 text-charcoal",
+    chip: "bg-emerald-400/20 text-emerald-300 border-emerald-400/40",
+  },
+] as const;
+
+export function fleetUnitForVehicleId(vehicleId: string) {
+  const id = vehicleId === "cozy-urbaniya" ? "cozy-urbania" : vehicleId;
+  return FLEET_UNITS.find((u) => u.vehicleId === id) ?? null;
 }
 
 export function vehicleCapacityLabel(vehicle: {

@@ -2,7 +2,6 @@ import { promises as fs } from "fs";
 import path from "path";
 import type { RowDataPacket } from "mysql2";
 import { queryExec, queryRows } from "@/lib/db";
-import { TRIP_PACKAGES } from "@/lib/constants";
 
 export type MediaRow = RowDataPacket & {
   id: number;
@@ -15,22 +14,6 @@ export type MediaRow = RowDataPacket & {
   updated_at: string;
 };
 
-export type PackageRow = RowDataPacket & {
-  id: number;
-  package_key: string;
-  option_label: string;
-  title: string;
-  price: string;
-  unit: string;
-  description: string | null;
-  includes_json: string | null;
-  excludes: string | null;
-  cta_label: string;
-  wa_message: string | null;
-  sort_order: number;
-  is_active: number;
-};
-
 export type TextRow = RowDataPacket & {
   text_key: string;
   label: string;
@@ -38,24 +21,11 @@ export type TextRow = RowDataPacket & {
   updated_at: string;
 };
 
-export type TripPackageView = {
-  id: string;
-  option: string;
-  title: string;
-  price: string;
-  unit: string;
-  description: string;
-  includes: string[];
-  excludes: string;
-  cta: string;
-  waMessage: string;
-};
-
 const MEDIA_SECTIONS = [
   { id: "home_fleet", label: "Home — Our Fleet images" },
   { id: "home_gallery", label: "Home — Gallery images" },
+  { id: "home_cta", label: "Home — Plan your trip image" },
   { id: "blog", label: "Blog images" },
-  { id: "packages", label: "Packages images" },
 ] as const;
 
 export function getMediaSections() {
@@ -113,78 +83,6 @@ export async function updateMediaFile(
     }
   );
   return getMediaBySlot(slotKey);
-}
-
-export async function listPackages(activeOnly = false) {
-  const sql = activeOnly
-    ? `SELECT * FROM site_packages WHERE is_active = 1 ORDER BY sort_order, id`
-    : `SELECT * FROM site_packages ORDER BY sort_order, id`;
-  return queryRows<PackageRow[]>(sql);
-}
-
-export async function getPackagesForSite(): Promise<TripPackageView[]> {
-  try {
-    const rows = await listPackages(true);
-    if (!rows.length) return fallbackPackages();
-    return rows.map((row) => ({
-      id: row.package_key,
-      option: row.option_label,
-      title: row.title,
-      price: row.price,
-      unit: row.unit,
-      description: row.description || "",
-      includes: safeJsonArray(row.includes_json),
-      excludes: row.excludes || "",
-      cta: row.cta_label,
-      waMessage: row.wa_message || "",
-    }));
-  } catch {
-    return fallbackPackages();
-  }
-}
-
-export async function updatePackage(
-  packageKey: string,
-  patch: {
-    option_label?: string;
-    title?: string;
-    price?: string;
-    unit?: string;
-    description?: string;
-    includes?: string[];
-    excludes?: string;
-    cta_label?: string;
-    wa_message?: string;
-    is_active?: boolean;
-  }
-) {
-  await queryExec(
-    `UPDATE site_packages SET
-      option_label = COALESCE(:option_label, option_label),
-      title = COALESCE(:title, title),
-      price = COALESCE(:price, price),
-      unit = COALESCE(:unit, unit),
-      description = COALESCE(:description, description),
-      includes_json = COALESCE(:includes_json, includes_json),
-      excludes = COALESCE(:excludes, excludes),
-      cta_label = COALESCE(:cta_label, cta_label),
-      wa_message = COALESCE(:wa_message, wa_message),
-      is_active = COALESCE(:is_active, is_active)
-     WHERE package_key = :package_key`,
-    {
-      package_key: packageKey,
-      option_label: patch.option_label ?? null,
-      title: patch.title ?? null,
-      price: patch.price ?? null,
-      unit: patch.unit ?? null,
-      description: patch.description ?? null,
-      includes_json: patch.includes ? JSON.stringify(patch.includes) : null,
-      excludes: patch.excludes ?? null,
-      cta_label: patch.cta_label ?? null,
-      wa_message: patch.wa_message ?? null,
-      is_active: typeof patch.is_active === "boolean" ? (patch.is_active ? 1 : 0) : null,
-    }
-  );
 }
 
 export async function getTextsMap() {
@@ -266,6 +164,108 @@ export const TOUR_TEXT_DEFAULTS = [
   },
 ] as const;
 
+export const TESTIMONIAL_TEXT_DEFAULTS = [
+  {
+    text_key: "testimonials_title",
+    label: "Testimonials — Section title",
+    content: "What travellers say",
+  },
+  {
+    text_key: "testimonials_subtitle",
+    label: "Testimonials — Section subtitle",
+    content: "Real feedback from families and groups who travelled with Go Cozy.",
+  },
+] as const;
+
+export const HOME_CTA_TEXT_DEFAULTS = [
+  {
+    text_key: "home_cta_title",
+    label: "Home CTA — Title",
+    content: "Ready to plan your trip?",
+  },
+  {
+    text_key: "home_cta_body",
+    label: "Home CTA — Body text",
+    content:
+      "Share dates and group size — we confirm pricing on WhatsApp. Follow journeys on Instagram too.",
+  },
+  {
+    text_key: "home_cta_phone",
+    label: "Home CTA — Phone display",
+    content: "+91 91451 11125",
+  },
+  {
+    text_key: "home_cta_email",
+    label: "Home CTA — Email",
+    content: "GoCozyCaravan@gmail.com",
+  },
+  {
+    text_key: "home_cta_office",
+    label: "Home CTA — Office address",
+    content:
+      "Office 103, Gera Imperium Rise, opposite Wipro Circle, Hinjawadi Phase II, Rajiv Gandhi Infotech Park, Hinjawadi, Pune, Maharashtra 411057",
+  },
+  {
+    text_key: "home_cta_instagram_label",
+    label: "Home CTA — Instagram label",
+    content: "Instagram @gocozycaravan",
+  },
+  {
+    text_key: "home_cta_instagram_url",
+    label: "Home CTA — Instagram URL",
+    content: "https://www.instagram.com/gocozycaravan",
+  },
+  {
+    text_key: "home_cta_primary_label",
+    label: "Home CTA — Primary button label",
+    content: "Book a slot",
+  },
+  {
+    text_key: "home_cta_primary_href",
+    label: "Home CTA — Primary button link",
+    content: "/book",
+  },
+  {
+    text_key: "home_cta_secondary_label",
+    label: "Home CTA — Secondary button label",
+    content: "Contact us",
+  },
+  {
+    text_key: "home_cta_secondary_href",
+    label: "Home CTA — Secondary button link",
+    content: "/contact",
+  },
+  {
+    text_key: "home_cta_image_alt",
+    label: "Home CTA — Image alt text",
+    content: "Luxury caravan interior with seating and lighting",
+  },
+] as const;
+
+/** Ensure a media slot row exists (does not overwrite file_url). */
+export async function ensureMediaSlot(input: {
+  slot_key: string;
+  label: string;
+  section: string;
+  file_url?: string;
+  alt_text?: string;
+}) {
+  await queryExec(
+    `INSERT INTO site_media (slot_key, label, section, file_url, alt_text, is_active)
+     VALUES (:slot_key, :label, :section, :file_url, :alt_text, 1)
+     ON DUPLICATE KEY UPDATE
+       label = VALUES(label),
+       section = VALUES(section)`,
+    {
+      slot_key: input.slot_key,
+      label: input.label,
+      section: input.section,
+      file_url: input.file_url || "/images/gallery/interior-lounge-2.png",
+      alt_text: input.alt_text || null,
+    }
+  );
+}
+
 export async function saveUploadedFile(
   file: File,
   section: string
@@ -289,29 +289,4 @@ function guessExt(mime: string) {
   if (mime.includes("webp")) return ".webp";
   if (mime.includes("gif")) return ".gif";
   return ".jpg";
-}
-
-function safeJsonArray(raw: string | null): string[] {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    return Array.isArray(parsed) ? parsed.map(String) : [];
-  } catch {
-    return [];
-  }
-}
-
-function fallbackPackages(): TripPackageView[] {
-  return TRIP_PACKAGES.map((p) => ({
-    id: p.id,
-    option: p.option,
-    title: p.title,
-    price: p.price,
-    unit: p.unit,
-    description: p.description,
-    includes: [...p.includes],
-    excludes: p.excludes,
-    cta: p.cta,
-    waMessage: p.waMessage,
-  }));
 }
