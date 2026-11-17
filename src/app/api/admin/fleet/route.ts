@@ -99,6 +99,14 @@ export async function POST(request: Request) {
           const [title, ...rest] = line.split(":");
           return { title: title.trim(), description: rest.join(":").trim() || title.trim() };
         }),
+      included: String(form.get("included") || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
+      excluded: String(form.get("excluded") || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
       sort_order: Number(form.get("sort_order") || 0),
       is_active: String(form.get("is_active") || "1") !== "0",
     });

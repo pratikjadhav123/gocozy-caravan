@@ -50,7 +50,7 @@ export function Header() {
               alt={`${SITE.name} logo`}
               width={744}
               height={160}
-              className="h-7 w-auto max-w-[min(148px,52vw)] object-contain object-left sm:h-8 sm:max-w-[168px] lg:h-9 lg:max-w-[188px]"
+              className="h-5 w-auto max-w-[min(108px,42vw)] object-contain object-left sm:h-6 sm:max-w-[124px] lg:h-[1.65rem] lg:max-w-[138px]"
               priority
             />
           </motion.span>

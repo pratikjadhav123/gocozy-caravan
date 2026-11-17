@@ -5,8 +5,14 @@ import { OfficeLocation } from "@/components/OfficeLocation";
 import { Reveal } from "@/components/Reveal";
 import { FaqSection } from "@/components/FaqSection";
 import { TourVideo } from "@/components/TourVideo";
-import { TripPackages } from "@/components/TripPackages";
-import { ensureTexts, getMediaMap, getTextsMap, TOUR_TEXT_DEFAULTS } from "@/lib/cms";
+import {
+  ensureMediaSlot,
+  ensureTexts,
+  getMediaMap,
+  getTextsMap,
+  HOME_CTA_TEXT_DEFAULTS,
+  TOUR_TEXT_DEFAULTS,
+} from "@/lib/cms";
 import { getCmsVehiclesForSite } from "@/lib/cms-content";
 import {
   getAmenitiesForSite,
@@ -32,7 +38,14 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const wa = whatsappUrl("Hi GoCozyCaravan, I want to check availability for a trip.");
   try {
-    await ensureTexts([...TOUR_TEXT_DEFAULTS]);
+    await ensureTexts([...TOUR_TEXT_DEFAULTS, ...HOME_CTA_TEXT_DEFAULTS]);
+    await ensureMediaSlot({
+      slot_key: "home_cta_image",
+      label: "Home CTA — Side image",
+      section: "home_cta",
+      file_url: "/images/gallery/interior-lounge-2.png",
+      alt_text: "Luxury caravan interior with seating and lighting",
+    });
   } catch {
     /* tables may be missing in local setups */
   }
@@ -275,8 +288,6 @@ export default async function HomePage() {
         posterSrc={tourPoster}
       />
 
-      <TripPackages />
-
       <FaqSection />
 
       <OfficeLocation />
@@ -286,51 +297,58 @@ export default async function HomePage() {
           <Reveal>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
               <Image
-                src="/images/gallery/interior-lounge-2.png"
-                alt="Luxury caravan interior with seating and lighting"
+                src={
+                  media.home_cta_image?.file_url || "/images/gallery/interior-lounge-2.png"
+                }
+                alt={
+                  media.home_cta_image?.alt_text ||
+                  texts.home_cta_image_alt ||
+                  "Luxury caravan interior with seating and lighting"
+                }
                 fill
                 className="object-cover"
                 sizes="(max-width:1024px) 100vw, 50vw"
+                unoptimized={(media.home_cta_image?.file_url || "").startsWith("/uploads/")}
               />
             </div>
           </Reveal>
           <Reveal delayMs={120}>
             <div>
               <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
-                Ready to plan your trip?
+                {texts.home_cta_title || "Ready to plan your trip?"}
               </h2>
               <div className="gold-underline mt-4 w-24" />
               <p className="mt-4 text-zinc-400">
-                Share dates and group size — we confirm pricing on WhatsApp. Follow journeys on
-                Instagram too.
+                {texts.home_cta_body ||
+                  "Share dates and group size — we confirm pricing on WhatsApp. Follow journeys on Instagram too."}
               </p>
               <ul className="mt-6 space-y-2 text-sm text-zinc-300">
-                <li>Phone: {SITE.phoneDisplay}</li>
-                <li>Email: {SITE.email}</li>
-                <li>Office: {SITE.address}</li>
+                <li>Phone: {texts.home_cta_phone || SITE.phoneDisplay}</li>
+                <li>Email: {texts.home_cta_email || SITE.email}</li>
+                <li>Office: {texts.home_cta_office || SITE.address}</li>
                 <li>
                   <a
-                    href={SITE.instagram}
+                    href={texts.home_cta_instagram_url || SITE.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gold hover:underline"
                   >
-                    Instagram @gocozycaravan
+                    {texts.home_cta_instagram_label || "Instagram @gocozycaravan"}
                   </a>
                 </li>
               </ul>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/book"
+                  href={texts.home_cta_primary_href || "/book"}
                   className="btn-press inline-flex items-center justify-center rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-charcoal transition hover:bg-gold-light"
                 >
-                  Book a slot
+                  {texts.home_cta_primary_label || "Book a slot"}
                 </Link>
                 <Link
-                  href="/packages"
+                  href={texts.home_cta_secondary_href || "/contact"}
                   className="btn-press inline-flex items-center justify-center rounded-full border border-white/25 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
                 >
-                  View packages
+                  {texts.home_cta_secondary_label || "Contact us"}
                 </Link>
               </div>
             </div>

@@ -7,9 +7,8 @@ import { HeroEditor } from "@/components/admin/HeroEditor";
 import { HomeFleetCardsEditor } from "@/components/admin/HomeFleetCardsEditor";
 import { HomeSubTabs } from "@/components/admin/HomeSubTabs";
 import { MediaUploader } from "@/components/admin/MediaUploader";
-import { PackagesEditor } from "@/components/admin/PackagesEditor";
 import { TextsEditor } from "@/components/admin/TextsEditor";
-import { listMedia, listPackages, listTexts } from "@/lib/cms";
+import { listMedia, listTexts } from "@/lib/cms";
 import { listCmsBlogPosts, listCmsVehicles } from "@/lib/cms-content";
 import { listAmenities, listDestinations, listHeroSlides } from "@/lib/cms-home";
 
@@ -21,9 +20,7 @@ const HOME_SECTIONS = ["hero", "fleet", "gallery", "destinations", "amenities", 
 
 export default async function AdminContentPage({ searchParams }: PageProps) {
   const sp = await searchParams;
-  const tab = ["home", "fleet", "packages", "blog"].includes(sp.tab || "")
-    ? (sp.tab as string)
-    : "home";
+  const tab = ["home", "fleet", "blog"].includes(sp.tab || "") ? (sp.tab as string) : "home";
   const section = HOME_SECTIONS.includes(sp.section as (typeof HOME_SECTIONS)[number])
     ? (sp.section as string)
     : "hero";
@@ -31,7 +28,6 @@ export default async function AdminContentPage({ searchParams }: PageProps) {
   let error = "";
   let media: Awaited<ReturnType<typeof listMedia>> = [];
   let texts: Awaited<ReturnType<typeof listTexts>> = [];
-  let packages: Awaited<ReturnType<typeof listPackages>> = [];
   let vehicles: Awaited<ReturnType<typeof listCmsVehicles>> = [];
   let posts: Awaited<ReturnType<typeof listCmsBlogPosts>> = [];
   let heroSlides: Awaited<ReturnType<typeof listHeroSlides>> = [];
@@ -57,8 +53,6 @@ export default async function AdminContentPage({ searchParams }: PageProps) {
       } else if (section === "about") {
         [media, texts] = await Promise.all([listMedia("about"), listTexts()]);
       }
-    } else if (tab === "packages") {
-      [packages, texts] = await Promise.all([listPackages(), listTexts()]);
     } else if (tab === "fleet") {
       vehicles = await listCmsVehicles();
     } else if (tab === "blog") {
@@ -74,7 +68,6 @@ export default async function AdminContentPage({ searchParams }: PageProps) {
   const destTexts = texts.filter((t) => t.text_key.startsWith("home_dest_"));
   const amenityTexts = texts.filter((t) => t.text_key.startsWith("home_amenities_"));
   const aboutTexts = texts.filter((t) => t.text_key.startsWith("about_"));
-  const packageTexts = texts.filter((t) => t.text_key.startsWith("packages_"));
   const homeFleetMedia = media.filter((m) => m.section === "home_fleet");
   const galleryMedia = media.filter((m) => m.section === "home_gallery");
   const aboutMedia = media.filter((m) => m.section === "about");
@@ -148,13 +141,6 @@ export default async function AdminContentPage({ searchParams }: PageProps) {
       ) : null}
 
       {!error && tab === "fleet" ? <FleetEditor initial={vehicles} /> : null}
-
-      {!error && tab === "packages" ? (
-        <div className="space-y-8">
-          <TextsEditor initial={packageTexts} />
-          <PackagesEditor initial={packages} />
-        </div>
-      ) : null}
 
       {!error && tab === "blog" ? <BlogEditor initial={posts} /> : null}
     </div>

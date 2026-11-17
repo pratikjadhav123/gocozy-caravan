@@ -6,6 +6,5 @@ export const MEDIA_CATEGORIES = [
   { id: "gallery", label: "Gallery" },
   { id: "about", label: "About" },
   { id: "blog", label: "Blog" },
-  { id: "packages", label: "Packages" },
   { id: "testimonials", label: "Testimonials" },
 ] as const;

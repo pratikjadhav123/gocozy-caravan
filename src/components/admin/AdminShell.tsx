@@ -13,6 +13,7 @@ type NavItem = {
   icon:
     | "dashboard"
     | "bookings"
+    | "calendar"
     | "enquiries"
     | "media"
     | "banners"
@@ -33,7 +34,13 @@ const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
   {
     title: "CRM",
     items: [
-      { href: "/admin/bookings", label: "Bookings", icon: "bookings" },
+      {
+        href: "/admin/bookings",
+        label: "Bookings",
+        match: "^/admin/bookings(?!/calendar)(/|$)",
+        icon: "bookings",
+      },
+      { href: "/admin/bookings/calendar", label: "Calendar", icon: "calendar" },
       { href: "/admin/contacts", label: "Enquiries", icon: "enquiries" },
     ],
   },
@@ -65,6 +72,7 @@ function roleLabel(role: string) {
 
 function pageTitle(pathname: string) {
   if (pathname.startsWith("/admin/bookings/new")) return "New booking";
+  if (pathname.startsWith("/admin/bookings/calendar")) return "Booking calendar";
   if (pathname.startsWith("/admin/bookings")) return "Bookings";
   if (pathname.startsWith("/admin/contacts")) return "Enquiries";
   if (pathname.startsWith("/admin/media-library")) return "Media Library";
@@ -114,6 +122,14 @@ function NavIcon({ name, className = "" }: { name: NavItem["icon"]; className?: 
         <svg {...common}>
           <rect x="4" y="5" width="16" height="15" rx="2" />
           <path d="M8 3v4M16 3v4M4 10h16" />
+        </svg>
+      );
+    case "calendar":
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M8 3v4M16 3v4M3 11h18" />
+          <path d="M8 15h2M12 15h2M16 15h2M8 18h2M12 18h2" />
         </svg>
       );
     case "enquiries":

@@ -26,7 +26,7 @@ export async function Footer() {
             alt={`${SITE.name} logo`}
             width={744}
             height={160}
-            className="h-10 w-auto max-w-[220px] object-contain object-left sm:h-11 sm:max-w-[250px]"
+            className="h-7 w-auto max-w-[150px] object-contain object-left sm:h-8 sm:max-w-[168px]"
           />
           <p className="mt-4 text-sm leading-relaxed text-zinc-300">{blurb}</p>
           <p className="mt-4 text-sm leading-relaxed text-zinc-500">{SITE.address}</p>
@@ -75,13 +75,13 @@ export async function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/packages" prefetch={false} className="transition hover:text-gold">
-                Packages
+              <Link href="/book" prefetch={false} className="transition hover:text-gold">
+                Book Now
               </Link>
             </li>
             <li>
-              <Link href="/book" prefetch={false} className="transition hover:text-gold">
-                Book Now
+              <Link href="/contact" prefetch={false} className="transition hover:text-gold">
+                Contact Us
               </Link>
             </li>
             <li>

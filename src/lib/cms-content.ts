@@ -1,6 +1,6 @@
 import type { RowDataPacket } from "mysql2";
 import { queryExec, queryRows } from "@/lib/db";
-import { VEHICLES } from "@/lib/constants";
+import { INCLUDED_IN_QUOTE, NOT_INCLUDED, VEHICLES } from "@/lib/constants";
 import { BLOG_POSTS } from "@/lib/content";
 
 export type CmsVehicleRow = RowDataPacket & {
@@ -16,6 +16,8 @@ export type CmsVehicleRow = RowDataPacket & {
   gallery_json: string | null;
   specs_json: string | null;
   features_json: string | null;
+  included_json: string | null;
+  excluded_json: string | null;
   sort_order: number;
   is_active: number;
 };
@@ -57,6 +59,8 @@ export type SiteVehicle = {
   about: string;
   specs: { label: string; value: string }[];
   features: { title: string; description: string }[];
+  included: string[];
+  excluded: string[];
 };
 
 export type SiteBlogPost = {
@@ -72,6 +76,14 @@ export type SiteBlogPost = {
   content: string[];
 };
 
+function parseStringList(raw: string | null, fallback: readonly string[]): string[] {
+  const parsed = parseJson<unknown>(raw, null);
+  if (Array.isArray(parsed) && parsed.length) {
+    return parsed.map(String).map((s) => s.trim()).filter(Boolean);
+  }
+  return [...fallback];
+}
+
 export function mapVehicleRow(row: CmsVehicleRow): SiteVehicle {
   return {
     id: row.slug,
@@ -85,6 +97,8 @@ export function mapVehicleRow(row: CmsVehicleRow): SiteVehicle {
     about: row.about || "",
     specs: parseJson(row.specs_json, []),
     features: parseJson(row.features_json, []),
+    included: parseStringList(row.included_json, INCLUDED_IN_QUOTE),
+    excluded: parseStringList(row.excluded_json, NOT_INCLUDED),
   };
 }
 
@@ -123,6 +137,8 @@ function fallbackVehicles(): SiteVehicle[] {
     about: v.about,
     specs: v.specs.map((s) => ({ ...s })),
     features: v.features.map((f) => ({ ...f })),
+    included: [...INCLUDED_IN_QUOTE],
+    excluded: [...NOT_INCLUDED],
   }));
 }
 
@@ -179,18 +195,21 @@ export async function upsertCmsVehicle(input: {
   gallery?: { src: string; alt: string }[];
   specs?: { label: string; value: string }[];
   features?: { title: string; description: string }[];
+  included?: string[];
+  excluded?: string[];
   sort_order?: number;
   is_active?: boolean;
 }) {
   await queryExec(
     `INSERT INTO cms_vehicles
-      (slug, name, tagline, seats, beds, highlight, image, about, gallery_json, specs_json, features_json, sort_order, is_active)
+      (slug, name, tagline, seats, beds, highlight, image, about, gallery_json, specs_json, features_json, included_json, excluded_json, sort_order, is_active)
      VALUES
-      (:slug, :name, :tagline, :seats, :beds, :highlight, :image, :about, :gallery_json, :specs_json, :features_json, :sort_order, :is_active)
+      (:slug, :name, :tagline, :seats, :beds, :highlight, :image, :about, :gallery_json, :specs_json, :features_json, :included_json, :excluded_json, :sort_order, :is_active)
      ON DUPLICATE KEY UPDATE
       name=VALUES(name), tagline=VALUES(tagline), seats=VALUES(seats), beds=VALUES(beds),
       highlight=VALUES(highlight), image=VALUES(image), about=VALUES(about),
       gallery_json=VALUES(gallery_json), specs_json=VALUES(specs_json), features_json=VALUES(features_json),
+      included_json=VALUES(included_json), excluded_json=VALUES(excluded_json),
       sort_order=VALUES(sort_order), is_active=VALUES(is_active)`,
     {
       slug: input.slug,
@@ -204,6 +223,8 @@ export async function upsertCmsVehicle(input: {
       gallery_json: JSON.stringify(input.gallery || [{ src: input.image || "/images/slider/slide-2.png", alt: input.name }]),
       specs_json: JSON.stringify(input.specs || []),
       features_json: JSON.stringify(input.features || []),
+      included_json: JSON.stringify(input.included?.length ? input.included : [...INCLUDED_IN_QUOTE]),
+      excluded_json: JSON.stringify(input.excluded?.length ? input.excluded : [...NOT_INCLUDED]),
       sort_order: input.sort_order ?? 0,
       is_active: input.is_active === false ? 0 : 1,
     }

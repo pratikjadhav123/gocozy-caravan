@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { getMediaMap, getPackagesForSite, getTextsMap } from "@/lib/cms";
+import { getMediaMap, getTextsMap } from "@/lib/cms";
 
 /** Public content API for checking dynamic CMS data */
 export async function GET() {
-  const [media, packages, texts] = await Promise.all([
-    getMediaMap(),
-    getPackagesForSite(),
-    getTextsMap(),
-  ]);
+  const [media, texts] = await Promise.all([getMediaMap(), getTextsMap()]);
 
   return NextResponse.json({
     ok: true,
@@ -17,7 +13,6 @@ export async function GET() {
         { url: row.file_url, alt: row.alt_text, label: row.label, section: row.section },
       ])
     ),
-    packages,
     texts,
   });
 }

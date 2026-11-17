@@ -13,8 +13,8 @@ export default async function AdminMediaPage() {
   return (
     <div className="space-y-6">
       <p className="text-sm text-zinc-400">
-        Upload dynamic images for Home fleet, gallery, blog hero, and packages. Slot names are fixed
-        so the website picks them up automatically.
+        Upload dynamic images for Home fleet, gallery, and blog hero. Slot names are fixed so the
+        website picks them up automatically.
       </p>
       {error ? (
         <p className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">

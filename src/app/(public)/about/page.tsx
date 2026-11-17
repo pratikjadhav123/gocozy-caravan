@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { getMediaMap, getTextsMap } from "@/lib/cms";
+import { ensureTexts, getMediaMap, getTextsMap, TESTIMONIAL_TEXT_DEFAULTS } from "@/lib/cms";
 import { getTestimonialsForSite } from "@/lib/media-library";
 import { SITE } from "@/lib/constants";
 
@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AboutPage() {
+  await ensureTexts([...TESTIMONIAL_TEXT_DEFAULTS]).catch(() => undefined);
+
   const [media, texts, testimonials] = await Promise.all([
     getMediaMap("about"),
     getTextsMap(),
@@ -102,7 +104,11 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <TestimonialsSection items={testimonials} />
+      <TestimonialsSection
+        items={testimonials}
+        title={texts.testimonials_title}
+        subtitle={texts.testimonials_subtitle}
+      />
     </>
   );
 }
